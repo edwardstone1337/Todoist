@@ -7,7 +7,6 @@
   <title>Todoist TapLinks</title>
   <link rel="stylesheet" href="styles/tokens.css">
   <link rel="stylesheet" href="styles/styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 </head>
 <body data-theme="light">
   <div class="container">
@@ -102,7 +101,7 @@
 
           <!-- Generate Button -->
           <button type="submit" id="generate-btn" class="button button--primary" disabled>
-            Generate link
+            Generate
           </button>
         </form>
       </div>
@@ -111,11 +110,9 @@
     <!-- Output Section -->
     <section id="output-section" class="output-section" aria-live="polite" aria-atomic="true">
       <div class="card">
-        <h2 class="output-section__title">Generated Todoist URL</h2>
-        
         <!-- URL Display -->
         <div class="form-field">
-          <label for="generated-url" class="form-label">Generated Todoist URL</label>
+          <label for="generated-url" class="form-label">Generated Todoist link</label>
           <input
             type="text"
             id="generated-url"
@@ -124,7 +121,7 @@
             aria-describedby="url-helper"
           >
           <p id="url-helper" class="form-helper">
-            Opens Todoist Quick Add with this task on mobile.
+            Opens Todoist Quick Add with your task (best used on mobile).
           </p>
         </div>
 
@@ -133,23 +130,25 @@
           <button id="copy-url-btn" class="button button--secondary">
             Copy URL
           </button>
-          <button id="generate-qr-btn" class="button button--secondary">
-            Generate QR Code
-          </button>
         </div>
 
         <!-- Success Message -->
         <div id="copy-success" class="success-message" role="alert" aria-live="polite">
-          Link copied to clipboard.
+          Copied!
         </div>
 
         <!-- QR Code Display -->
         <div id="qr-container" class="qr-container" hidden>
-          <canvas id="qr-canvas" class="qr-canvas"></canvas>
+          <label class="form-label">QR code for this link</label>
+          <img id="qr-image" class="qr-image" alt="QR code for Todoist task link" />
+          <p id="qr-helper" class="form-helper">
+            Scan this QR with your phone to open Todoist Quick Add with this task.
+          </p>
           <button id="download-qr-btn" class="button button--secondary">
             Download QR
           </button>
         </div>
+        <div id="qr-error" class="form-error" role="alert" aria-live="polite"></div>
       </div>
     </section>
 

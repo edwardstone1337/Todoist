@@ -13,8 +13,9 @@ When scanned/tapped on a phone with Todoist installed, these URLs open Todoist's
 ## Features
 
 - **Simple Form Interface**: Only task name is required; all other fields are optional
+- **One-Click Generation**: Single "Generate" button creates both the URL and QR code simultaneously
 - **URL Generation**: Creates properly formatted Todoist Quick Add URLs
-- **QR Code Generation**: Generates QR codes from the created URLs
+- **QR Code Generation**: Automatically generates QR codes from the created URLs using goQR API
 - **Download QR Codes**: Export QR codes as PNG images
 - **Copy to Clipboard**: One-click URL copying with visual feedback
 - **Mobile-First Design**: Optimized for mobile devices with large tap targets
@@ -28,8 +29,9 @@ When scanned/tapped on a phone with Todoist installed, these URLs open Todoist's
    - Due date (supports Todoist natural language like "today", "in 90 mins", "every Monday")
    - Priority (P1-P4, where P1 is most urgent)
    - Project name (exact Todoist project name)
-3. Click "Generate link"
-4. Copy the URL or generate/download a QR code
+3. Click "Generate"
+4. The URL and QR code are created automatically
+5. Optionally copy the URL or download the QR code
 
 ## Technical Details
 
@@ -54,11 +56,15 @@ https://todoist.com/add?content=Task%20Name&date=in%2090%20mins&priority=1
 
 Project names are appended to the content using Quick Add syntax: `Task Name #Project Name`
 
+### QR Code Generation
+
+QR codes are generated using the goQR API (api.qrserver.com), providing reliable QR code generation without requiring client-side libraries. The QR codes are displayed as images and can be downloaded as PNG files.
+
 ### Browser Support
 
 - Modern browsers with ES6+ support
 - Clipboard API support (with fallback for older browsers)
-- Canvas API for QR code generation
+- Fetch API for QR code generation via external service
 
 ## File Structure
 
@@ -74,10 +80,11 @@ Project names are appended to the content using Quick Add syntax: `Task Name #Pr
 
 ## Dependencies
 
-- **qrcode.js**: QR code generation library (loaded via CDN)
-  - CDN: `https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js`
+- **goQR API**: QR code generation service
+  - API: `https://api.qrserver.com/v1/create-qr-code/`
+  - Used for reliable QR code generation without client-side libraries
 
-No build tools or package managers required.
+No build tools or package managers required. The application is a static front-end app with no runtime dependencies.
 
 ## Notes
 

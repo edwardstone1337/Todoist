@@ -12,7 +12,8 @@ const state = {
   priority: '',
   project: '',
   generatedUrl: '',
-  qrGenerated: false
+  qrGenerated: false,
+  qrImageUrl: ''
 };
 
 // ============================================
@@ -29,10 +30,10 @@ const elements = {
   outputSection: document.getElementById('output-section'),
   generatedUrlInput: document.getElementById('generated-url'),
   copyUrlBtn: document.getElementById('copy-url-btn'),
-  generateQrBtn: document.getElementById('generate-qr-btn'),
   downloadQrBtn: document.getElementById('download-qr-btn'),
   qrContainer: document.getElementById('qr-container'),
-  qrCanvas: document.getElementById('qr-canvas'),
+  qrImage: document.getElementById('qr-image'),
+  qrError: document.getElementById('qr-error'),
   copySuccess: document.getElementById('copy-success'),
   taskNameError: document.getElementById('task-name-error')
 };
@@ -147,7 +148,7 @@ function handleFormSubmit(e) {
   
   // Validate task name
   if (!validateTaskName(state.taskName)) {
-    showTaskNameError('Please enter a task name to generate a link.');
+    showTaskNameError('Please enter a task name to generate the link.');
     elements.taskNameInput.focus();
     return;
   }
@@ -162,9 +163,8 @@ function handleFormSubmit(e) {
   elements.generatedUrlInput.value = state.generatedUrl;
   elements.outputSection.hidden = false;
   
-  // Reset QR state
-  state.qrGenerated = false;
-  elements.qrContainer.hidden = true;
+  // Generate QR code automatically
+  generateQRCode();
   
   // Scroll to output section
   elements.outputSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -220,7 +220,7 @@ function showCopySuccess() {
   // Remove class after animation completes
   setTimeout(() => {
     elements.copySuccess.classList.remove('show');
-  }, 2500);
+  }, 2000);
 }
 
 // ============================================
@@ -228,69 +228,132 @@ function showCopySuccess() {
 // ============================================
 
 /**
- * Generates QR code from the generated URL
+ * Generates QR code from the generated URL using goQR API
  */
-function generateQRCode() {
+async function generateQRCode() {
   if (!state.generatedUrl) {
     return;
   }
   
-  // Check if QRCode library is available
-  if (typeof QRCode === 'undefined') {
-    console.error('QRCode library not loaded');
-    alert('QR code library failed to load. Please refresh the page.');
-    return;
+  // Clear any previous errors
+  clearQRError();
+  
+  // Hide QR container while generating
+  elements.qrContainer.hidden = true;
+  
+  try {
+    // Build goQR API URL
+    // API format: https://api.qrserver.com/v1/create-qr-code/?data=URL&size=SIZExSIZE
+    const qrSize = 300;
+    const encodedUrl = encodeURIComponent(state.generatedUrl);
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodedUrl}&size=${qrSize}x${qrSize}&format=png`;
+    
+    // Wait for image to load
+    await new Promise((resolve, reject) => {
+      // Remove previous event listeners by cloning the image
+      const newImage = elements.qrImage.cloneNode(false);
+      elements.qrImage.parentNode.replaceChild(newImage, elements.qrImage);
+      elements.qrImage = newImage;
+      
+      let timeoutId;
+      
+      elements.qrImage.onload = () => {
+        clearTimeout(timeoutId);
+        // Show QR container
+        state.qrGenerated = true;
+        state.qrImageUrl = qrApiUrl;
+        elements.qrContainer.hidden = false;
+        // Clear any error messages
+        clearQRError();
+        resolve();
+      };
+      
+      elements.qrImage.onerror = () => {
+        clearTimeout(timeoutId);
+        reject(new Error('Failed to load QR code image'));
+      };
+      
+      // Set src after setting up event listeners
+      elements.qrImage.src = qrApiUrl;
+      
+      // Timeout after 10 seconds
+      timeoutId = setTimeout(() => {
+        reject(new Error('QR code generation timed out'));
+      }, 10000);
+    });
+    
+  } catch (error) {
+    console.error('Error generating QR code:', error);
+    showQRError('We couldn\'t generate the QR code. Please try again.');
+    elements.qrContainer.hidden = true;
+    // Ensure error is visible even if container is hidden
+    elements.qrError.style.display = 'block';
   }
-  
-  // Clear previous QR code
-  const ctx = elements.qrCanvas.getContext('2d');
-  ctx.clearRect(0, 0, elements.qrCanvas.width, elements.qrCanvas.height);
-  
-  // Generate QR code using qrcode.js library
-  // The library is loaded via CDN and available as QRCode
-  QRCode.toCanvas(elements.qrCanvas, state.generatedUrl, {
-    width: 256,
-    margin: 2,
-    color: {
-      dark: '#000000',
-      light: '#ffffff'
-    }
-  }, (error) => {
-    if (error) {
-      console.error('Error generating QR code:', error);
-      alert('Failed to generate QR code. Please try again.');
-      return;
-    }
-    
-    // Show QR container with animation
-    state.qrGenerated = true;
-    elements.qrContainer.hidden = false;
-    
-    // Scroll to QR code
-    elements.qrContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  });
+}
+
+/**
+ * Shows error message for QR code generation
+ * @param {string} message - Error message to display
+ */
+function showQRError(message) {
+  elements.qrError.textContent = message;
+}
+
+/**
+ * Clears error message for QR code generation
+ */
+function clearQRError() {
+  elements.qrError.textContent = '';
+  elements.qrError.style.display = '';
 }
 
 /**
  * Downloads QR code as PNG
  */
-function downloadQRCode() {
-  if (!state.qrGenerated || !elements.qrCanvas) {
+async function downloadQRCode() {
+  if (!state.qrGenerated || !elements.qrImage || !elements.qrImage.src) {
     return;
   }
   
-  // Convert canvas to data URL
-  const dataURL = elements.qrCanvas.toDataURL('image/png');
-  
-  // Create download link
-  const link = document.createElement('a');
-  link.download = 'todoist-task-qr.png';
-  link.href = dataURL;
-  
-  // Trigger download
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  try {
+    // Fetch the QR code image
+    const response = await fetch(elements.qrImage.src);
+    if (!response.ok) {
+      throw new Error('Failed to fetch QR code image');
+    }
+    
+    // Convert to blob
+    const blob = await response.blob();
+    
+    // Create object URL
+    const objectUrl = URL.createObjectURL(blob);
+    
+    // Create download link
+    const link = document.createElement('a');
+    link.download = 'todoist-task-qr.png';
+    link.href = objectUrl;
+    
+    // Trigger download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Clean up object URL after a delay
+    setTimeout(() => {
+      URL.revokeObjectURL(objectUrl);
+    }, 100);
+    
+  } catch (error) {
+    console.error('Error downloading QR code:', error);
+    // Fallback: try to download using the image src directly
+    const link = document.createElement('a');
+    link.download = 'todoist-task-qr.png';
+    link.href = elements.qrImage.src;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 }
 
 // ============================================
@@ -306,9 +369,6 @@ elements.taskNameInput.addEventListener('blur', handleTaskNameChange);
 
 // Copy URL button
 elements.copyUrlBtn.addEventListener('click', copyUrlToClipboard);
-
-// Generate QR code button
-elements.generateQrBtn.addEventListener('click', generateQRCode);
 
 // Download QR code button
 elements.downloadQrBtn.addEventListener('click', downloadQRCode);
