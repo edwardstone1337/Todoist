@@ -1,0 +1,284 @@
+/* ============================================
+   Design Token System
+   ============================================ */
+
+/* ============================================
+   PRIMITIVE TOKENS
+   Raw values - source of truth
+   ============================================ */
+
+:root {
+  /* Spacing Primitives (8px base unit) */
+  --spacing-0: 0;
+  --spacing-1: 8px;
+  --spacing-2: 16px;
+  --spacing-3: 24px;
+  --spacing-4: 32px;
+  --spacing-5: 40px;
+  --spacing-6: 48px;
+  --spacing-7: 56px;
+  --spacing-8: 64px;
+  --spacing-9: 72px;
+  --spacing-10: 80px;
+
+  /* Color Primitives - Light Mode */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-blue-700: #1d4ed8;
+  --color-red-50: #fef2f2;
+  --color-red-100: #fee2e2;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-green-50: #f0fdf4;
+  --color-green-100: #dcfce7;
+  --color-green-500: #22c55e;
+  --color-green-600: #16a34a;
+
+  /* Typography Primitives */
+  --font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Border Radius Primitives */
+  --radius-none: 0;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Shadow Primitives */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* Transition Primitives */
+  --transition-fast: 150ms;
+  --transition-base: 200ms;
+  --transition-slow: 300ms;
+  --easing-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-ease-out: cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Dark Mode Color Primitives */
+[data-theme="dark"] {
+  --color-white: #111827;
+  --color-black: #ffffff;
+  --color-gray-50: #1f2937;
+  --color-gray-100: #374151;
+  --color-gray-200: #4b5563;
+  --color-gray-300: #6b7280;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #d1d5db;
+  --color-gray-600: #e5e7eb;
+  --color-gray-700: #f3f4f6;
+  --color-gray-800: #f9fafb;
+  --color-gray-900: #ffffff;
+  --color-blue-50: #1e3a5f;
+  --color-blue-100: #1e40af;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #60a5fa;
+  --color-blue-700: #93c5fd;
+  --color-red-50: #7f1d1d;
+  --color-red-100: #991b1b;
+  --color-red-500: #ef4444;
+  --color-red-600: #f87171;
+  --color-green-50: #14532d;
+  --color-green-100: #166534;
+  --color-green-500: #22c55e;
+  --color-green-600: #4ade80;
+}
+
+/* ============================================
+   ALIAS TOKENS
+   Grouping layer between primitives and semantics
+   ============================================ */
+
+:root {
+  /* Spacing Aliases */
+  --spacing-xs: var(--spacing-1);
+  --spacing-sm: var(--spacing-2);
+  --spacing-md: var(--spacing-3);
+  --spacing-lg: var(--spacing-4);
+  --spacing-xl: var(--spacing-5);
+  --spacing-2xl: var(--spacing-6);
+  --spacing-3xl: var(--spacing-8);
+
+  /* Color Family Aliases */
+  --color-gray-base: var(--color-gray-500);
+  --color-gray-light: var(--color-gray-200);
+  --color-gray-dark: var(--color-gray-700);
+  --color-blue-base: var(--color-blue-500);
+  --color-blue-light: var(--color-blue-100);
+  --color-blue-dark: var(--color-blue-700);
+  --color-red-base: var(--color-red-500);
+  --color-red-light: var(--color-red-100);
+  --color-red-dark: var(--color-red-600);
+  --color-green-base: var(--color-green-500);
+  --color-green-light: var(--color-green-100);
+  --color-green-dark: var(--color-green-600);
+}
+
+/* ============================================
+   SEMANTIC TOKENS
+   Mapped to UI purposes
+   ============================================ */
+
+:root {
+  /* Spacing Roles */
+  --spacing-card-padding: var(--spacing-4);
+  --spacing-card-gap: var(--spacing-3);
+  --spacing-field-gap: var(--spacing-3);
+  --spacing-field-padding: var(--spacing-2);
+  --spacing-section-margin: var(--spacing-6);
+  --spacing-section-gap: var(--spacing-4);
+  --spacing-button-padding-y: var(--spacing-2);
+  --spacing-button-padding-x: var(--spacing-4);
+  --spacing-button-gap: var(--spacing-2);
+  --spacing-info-gap: var(--spacing-2);
+
+  /* Text Styles */
+  --text-heading-1-font-size: var(--font-size-3xl);
+  --text-heading-1-font-weight: var(--font-weight-bold);
+  --text-heading-1-line-height: var(--line-height-tight);
+  --text-heading-2-font-size: var(--font-size-2xl);
+  --text-heading-2-font-weight: var(--font-weight-semibold);
+  --text-heading-2-line-height: var(--line-height-tight);
+  --text-body-font-size: var(--font-size-base);
+  --text-body-font-weight: var(--font-weight-normal);
+  --text-body-line-height: var(--line-height-normal);
+  --text-caption-font-size: var(--font-size-sm);
+  --text-caption-font-weight: var(--font-weight-normal);
+  --text-caption-line-height: var(--line-height-normal);
+  --text-label-font-size: var(--font-size-sm);
+  --text-label-font-weight: var(--font-weight-medium);
+  --text-label-line-height: var(--line-height-normal);
+  --text-helper-font-size: var(--font-size-xs);
+  --text-helper-font-weight: var(--font-weight-normal);
+  --text-helper-line-height: var(--line-height-normal);
+
+  /* Color Functions - Light Mode */
+  --color-background-primary: var(--color-white);
+  --color-background-secondary: var(--color-gray-50);
+  --color-background-card: var(--color-white);
+  --color-text-primary: var(--color-gray-900);
+  --color-text-secondary: var(--color-gray-600);
+  --color-text-tertiary: var(--color-gray-500);
+  --color-text-inverse: var(--color-white);
+  --color-border-default: var(--color-gray-300);
+  --color-border-focus: var(--color-blue-500);
+  --color-border-error: var(--color-red-500);
+  --color-button-primary-bg: var(--color-blue-500);
+  --color-button-primary-text: var(--color-white);
+  --color-button-primary-hover: var(--color-blue-600);
+  --color-button-secondary-bg: var(--color-gray-100);
+  --color-button-secondary-text: var(--color-gray-900);
+  --color-button-secondary-hover: var(--color-gray-200);
+  --color-button-disabled-bg: var(--color-gray-200);
+  --color-button-disabled-text: var(--color-gray-400);
+  --color-error: var(--color-red-500);
+  --color-error-bg: var(--color-red-50);
+  --color-success: var(--color-green-500);
+  --color-success-bg: var(--color-green-50);
+  --color-success-text: var(--color-green-600);
+}
+
+/* Color Functions - Dark Mode */
+[data-theme="dark"] {
+  --color-background-primary: var(--color-gray-900);
+  --color-background-secondary: var(--color-gray-800);
+  --color-background-card: var(--color-gray-800);
+  --color-text-primary: var(--color-gray-100);
+  --color-text-secondary: var(--color-gray-400);
+  --color-text-tertiary: var(--color-gray-500);
+  --color-text-inverse: var(--color-gray-900);
+  --color-border-default: var(--color-gray-600);
+  --color-border-focus: var(--color-blue-500);
+  --color-border-error: var(--color-red-500);
+  --color-button-primary-bg: var(--color-blue-500);
+  --color-button-primary-text: var(--color-white);
+  --color-button-primary-hover: var(--color-blue-600);
+  --color-button-secondary-bg: var(--color-gray-700);
+  --color-button-secondary-text: var(--color-gray-100);
+  --color-button-secondary-hover: var(--color-gray-600);
+  --color-button-disabled-bg: var(--color-gray-700);
+  --color-button-disabled-text: var(--color-gray-500);
+  --color-error: var(--color-red-500);
+  --color-error-bg: var(--color-red-50);
+  --color-success: var(--color-green-500);
+  --color-success-bg: var(--color-green-50);
+  --color-success-text: var(--color-green-600);
+}
+
+/* ============================================
+   COMPONENT TOKENS
+   Component-specific semantic tokens
+   ============================================ */
+
+:root {
+  /* Button Component */
+  --button-padding-y: var(--spacing-button-padding-y);
+  --button-padding-x: var(--spacing-button-padding-x);
+  --button-gap: var(--spacing-button-gap);
+  --button-border-radius: var(--radius-md);
+  --button-font-size: var(--text-body-font-size);
+  --button-font-weight: var(--font-weight-medium);
+  --button-transition: var(--transition-base) var(--easing-ease-in-out);
+
+  /* Input Component */
+  --input-padding-y: var(--spacing-field-padding);
+  --input-padding-x: var(--spacing-field-padding);
+  --input-border-radius: var(--radius-md);
+  --input-border-width: 1px;
+  --input-font-size: var(--text-body-font-size);
+  --input-transition: var(--transition-base) var(--easing-ease-in-out);
+
+  /* Card Component */
+  --card-padding: var(--spacing-card-padding);
+  --card-gap: var(--spacing-card-gap);
+  --card-border-radius: var(--radius-lg);
+  --card-shadow: var(--shadow-md);
+  --card-background: var(--color-background-card);
+
+  /* Form Component */
+  --form-field-gap: var(--spacing-field-gap);
+  --form-section-gap: var(--spacing-section-gap);
+
+  /* QR Code Component */
+  --qr-container-padding: var(--spacing-4);
+  --qr-container-border-radius: var(--radius-md);
+  --qr-container-background: var(--color-background-secondary);
+  --qr-container-border: 1px solid var(--color-border-default);
+
+  /* Output Section */
+  --output-section-gap: var(--spacing-3);
+  --output-button-gap: var(--spacing-2);
+}
+

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Generate Todoist task links for QR codes and NFC tags">
+  <title>Todoist TapLinks</title>
+  <link rel="stylesheet" href="styles/tokens.css">
+  <link rel="stylesheet" href="styles/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body data-theme="light">
+  <div class="container">
+    <!-- Header Section -->
+    <header class="header">
+      <h1 class="header__title">Todoist TapLinks</h1>
+      <p class="header__subtitle">Generate Todoist task links for QR codes and NFC tags.</p>
+    </header>
+
+    <!-- Form Section -->
+    <section class="form-section">
+      <div class="card">
+        <form id="task-form" class="form" novalidate>
+          <!-- Task Name Field -->
+          <div class="form-field">
+            <label for="task-name" class="form-label">
+              Task name
+              <span class="form-label__required">• Required</span>
+            </label>
+            <input
+              type="text"
+              id="task-name"
+              name="task-name"
+              class="form-input"
+              placeholder="e.g. Empty washing machine"
+              required
+              aria-describedby="task-name-helper task-name-error"
+            >
+            <p id="task-name-helper" class="form-helper">
+              Required. What should the task be called?
+            </p>
+            <p id="task-name-error" class="form-error" role="alert" aria-live="polite"></p>
+          </div>
+
+          <!-- Due Date Field -->
+          <div class="form-field">
+            <label for="due-date" class="form-label">
+              Due date <span class="form-label__optional">(optional)</span>
+            </label>
+            <input
+              type="text"
+              id="due-date"
+              name="due-date"
+              class="form-input"
+              placeholder="e.g. today, in 90 mins, every Monday"
+              aria-describedby="due-date-helper"
+            >
+            <p id="due-date-helper" class="form-helper">
+              Any Todoist natural language (e.g. 'today', 'in 90 mins', 'every Monday'). Leave blank for no due date.
+            </p>
+          </div>
+
+          <!-- Priority Field -->
+          <div class="form-field">
+            <label for="priority" class="form-label">
+              Priority <span class="form-label__optional">(optional)</span>
+            </label>
+            <select
+              id="priority"
+              name="priority"
+              class="form-select"
+              aria-describedby="priority-helper"
+            >
+              <option value="">None</option>
+              <option value="4">Priority 4</option>
+              <option value="3">Priority 3</option>
+              <option value="2">Priority 2</option>
+              <option value="1">Priority 1</option>
+            </select>
+            <p id="priority-helper" class="form-helper">
+              Optional. Higher priority = more urgent in Todoist.
+            </p>
+          </div>
+
+          <!-- Project Field -->
+          <div class="form-field">
+            <label for="project" class="form-label">
+              Project <span class="form-label__optional">(optional)</span>
+            </label>
+            <input
+              type="text"
+              id="project"
+              name="project"
+              class="form-input"
+              placeholder="e.g. Home and Chores"
+              aria-describedby="project-helper"
+            >
+            <p id="project-helper" class="form-helper">
+              Exact Todoist project name. Leave blank to use Inbox.
+            </p>
+          </div>
+
+          <!-- Generate Button -->
+          <button type="submit" id="generate-btn" class="button button--primary" disabled>
+            Generate link
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Output Section -->
+    <section id="output-section" class="output-section" aria-live="polite" aria-atomic="true">
+      <div class="card">
+        <h2 class="output-section__title">Generated Todoist URL</h2>
+        
+        <!-- URL Display -->
+        <div class="form-field">
+          <label for="generated-url" class="form-label">Generated Todoist URL</label>
+          <input
+            type="text"
+            id="generated-url"
+            class="form-input form-input--readonly"
+            readonly
+            aria-describedby="url-helper"
+          >
+          <p id="url-helper" class="form-helper">
+            Opens Todoist Quick Add with this task on mobile.
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="output-actions">
+          <button id="copy-url-btn" class="button button--secondary">
+            Copy URL
+          </button>
+          <button id="generate-qr-btn" class="button button--secondary">
+            Generate QR Code
+          </button>
+        </div>
+
+        <!-- Success Message -->
+        <div id="copy-success" class="success-message" role="alert" aria-live="polite">
+          Link copied to clipboard.
+        </div>
+
+        <!-- QR Code Display -->
+        <div id="qr-container" class="qr-container" hidden>
+          <canvas id="qr-canvas" class="qr-canvas"></canvas>
+          <button id="download-qr-btn" class="button button--secondary">
+            Download QR
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Info Section -->
+    <section class="info-section">
+      <div class="info-card">
+        <h2 class="info-card__title">How it works</h2>
+        <ul class="info-list">
+          <li>At minimum, only Task name is required.</li>
+          <li>If no project is entered, Todoist will use your Inbox.</li>
+          <li>URLs work best on mobile and when scanned from QR codes.</li>
+          <li>You can write this URL to an NFC tag using apps like NFC Tools.</li>
+          <li>If project name doesn't match exactly, Todoist may use Inbox instead.</li>
+        </ul>
+        <p class="info-note">
+          <strong>Note:</strong> This is an unofficial tool for Todoist; no official affiliation.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
