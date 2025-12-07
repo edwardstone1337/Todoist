@@ -9,7 +9,7 @@
 const state = {
   taskName: '',
   dueDate: '',
-  priority: '',
+  priority: '4',
   project: '',
   generatedUrl: '',
   qrGenerated: false,
@@ -24,7 +24,10 @@ const elements = {
   form: document.getElementById('task-form'),
   taskNameInput: document.getElementById('task-name'),
   dueDateInput: document.getElementById('due-date'),
-  prioritySelect: document.getElementById('priority'),
+  priorityDropdown: document.getElementById('priority-dropdown'),
+  priorityTrigger: document.getElementById('priority-trigger'),
+  priorityMenu: document.querySelector('.priority-dropdown__menu'),
+  priorityOptions: null, // Will be set after DOM loads
   projectInput: document.getElementById('project'),
   generateBtn: document.getElementById('generate-btn'),
   outputSection: document.getElementById('output-section'),
@@ -33,9 +36,15 @@ const elements = {
   downloadQrBtn: document.getElementById('download-qr-btn'),
   qrContainer: document.getElementById('qr-container'),
   qrImage: document.getElementById('qr-image'),
+  qrLoading: document.getElementById('qr-loading'),
   qrError: document.getElementById('qr-error'),
-  copySuccess: document.getElementById('copy-success'),
-  taskNameError: document.getElementById('task-name-error')
+  snackbar: document.getElementById('snackbar'),
+  taskNameError: document.getElementById('task-name-error'),
+  themeToggleBtn: document.getElementById('theme-toggle-btn'),
+  themeMenu: document.getElementById('theme-menu'),
+  themeMenuItems: document.querySelectorAll('.theme-menu__item'),
+  coffeeButtonContainer: document.getElementById('coffee-button-container'),
+  coffeeBtn: document.getElementById('coffee-btn')
 };
 
 // ============================================
@@ -47,7 +56,7 @@ const elements = {
  * @param {Object} params - Form parameters
  * @param {string} params.taskName - Task name (required)
  * @param {string} params.dueDate - Due date (optional)
- * @param {string} params.priority - Priority value 1-4 (optional)
+ * @param {string} params.priority - Priority value 1-4 (always included, defaults to 4)
  * @param {string} params.project - Project name (optional)
  * @returns {string} Complete Todoist URL
  */
@@ -71,12 +80,19 @@ function buildTodoistUrl({ taskName, dueDate, priority, project }) {
     url += '&date=' + encodeURIComponent(dueDate.trim());
   }
   
-  // Add priority if provided (and not empty/default)
-  if (priority && priority !== '') {
-    url += '&priority=' + priority;
-  }
+  // Always add priority (defaults to 4 if not set)
+  url += '&priority=' + (priority || '4');
   
   return url;
+}
+
+/**
+ * Builds a Todoist "Add Task" URL for the coffee task
+ * @returns {string} Complete Todoist URL for coffee task
+ */
+function buildCoffeeTaskUrl() {
+  const taskContent = 'Buy Edward a coffee ☕ https://buymeacoffee.com/edward';
+  return 'https://todoist.com/add?content=' + encodeURIComponent(taskContent);
 }
 
 // ============================================
@@ -143,12 +159,12 @@ function handleFormSubmit(e) {
   // Update state from form inputs
   state.taskName = elements.taskNameInput.value.trim();
   state.dueDate = elements.dueDateInput.value.trim();
-  state.priority = elements.prioritySelect.value;
+  // Priority is already maintained in state and updated via dropdown handlers
   state.project = elements.projectInput.value.trim();
   
   // Validate task name
   if (!validateTaskName(state.taskName)) {
-    showTaskNameError('Please enter a task name to generate the link.');
+    showTaskNameError('Please give your task a name.');
     elements.taskNameInput.focus();
     return;
   }
@@ -163,11 +179,27 @@ function handleFormSubmit(e) {
   elements.generatedUrlInput.value = state.generatedUrl;
   elements.outputSection.hidden = false;
   
+  // Show coffee button after successful generation
+  elements.coffeeButtonContainer.hidden = false;
+  
+  // Reset copy button state if it was in "Copied" state
+  if (elements.copyUrlBtn.textContent === 'Copied') {
+    elements.copyUrlBtn.textContent = 'Copy URL';
+    elements.copyUrlBtn.setAttribute('aria-label', 'Copy URL');
+  }
+  
   // Generate QR code automatically
   generateQRCode();
   
   // Scroll to output section
   elements.outputSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  
+  // Move focus to generated URL field for screen reader announcement
+  setTimeout(() => {
+    elements.generatedUrlInput.focus();
+    // Announce generation success to screen readers
+    elements.outputSection.setAttribute('aria-label', 'Todoist link generated successfully');
+  }, 100);
 }
 
 // ============================================
@@ -212,15 +244,24 @@ function fallbackCopyToClipboard(text) {
 }
 
 /**
- * Shows success message after copying
+ * Shows snackbar and updates button label after copying
  */
 function showCopySuccess() {
-  elements.copySuccess.classList.add('show');
+  // Update button label to "Copied"
+  const originalText = elements.copyUrlBtn.textContent;
+  const originalAriaLabel = elements.copyUrlBtn.getAttribute('aria-label');
+  elements.copyUrlBtn.textContent = 'Copied';
+  elements.copyUrlBtn.setAttribute('aria-label', 'URL copied to clipboard');
   
-  // Remove class after animation completes
+  // Show snackbar
+  elements.snackbar.hidden = false;
+  
+  // Hide snackbar and restore button after 6 seconds
   setTimeout(() => {
-    elements.copySuccess.classList.remove('show');
-  }, 2000);
+    elements.snackbar.hidden = true;
+    elements.copyUrlBtn.textContent = originalText;
+    elements.copyUrlBtn.setAttribute('aria-label', originalAriaLabel || 'Copy URL');
+  }, 6000);
 }
 
 // ============================================
@@ -238,8 +279,11 @@ async function generateQRCode() {
   // Clear any previous errors
   clearQRError();
   
-  // Hide QR container while generating
-  elements.qrContainer.hidden = true;
+  // Show QR container with loading state
+  elements.qrContainer.hidden = false;
+  elements.qrContainer.setAttribute('aria-busy', 'true');
+  elements.qrLoading.hidden = false;
+  elements.qrImage.hidden = true;
   
   try {
     // Build goQR API URL
@@ -259,10 +303,13 @@ async function generateQRCode() {
       
       elements.qrImage.onload = () => {
         clearTimeout(timeoutId);
+        // Hide loading, show QR image
+        elements.qrLoading.hidden = true;
+        elements.qrImage.hidden = false;
+        elements.qrContainer.setAttribute('aria-busy', 'false');
         // Show QR container
         state.qrGenerated = true;
         state.qrImageUrl = qrApiUrl;
-        elements.qrContainer.hidden = false;
         // Clear any error messages
         clearQRError();
         resolve();
@@ -284,7 +331,11 @@ async function generateQRCode() {
     
   } catch (error) {
     console.error('Error generating QR code:', error);
-    showQRError('We couldn\'t generate the QR code. Please try again.');
+    // Hide loading state
+    elements.qrLoading.hidden = true;
+    elements.qrContainer.setAttribute('aria-busy', 'false');
+    // Show error
+    showQRError('Couldn\'t generate the QR code. Give it another try.');
     elements.qrContainer.hidden = true;
     // Ensure error is visible even if container is hidden
     elements.qrError.style.display = 'block';
@@ -357,6 +408,538 @@ async function downloadQRCode() {
 }
 
 // ============================================
+// Theme Management
+// ============================================
+
+const THEME_STORAGE_KEY = 'todoist-taplinks-theme';
+const THEME_SYSTEM = 'system';
+const THEME_LIGHT = 'light';
+const THEME_DARK = 'dark';
+
+/**
+ * Gets the system theme preference
+ * @returns {string} 'light' or 'dark'
+ */
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? THEME_DARK : THEME_LIGHT;
+}
+
+/**
+ * Gets the stored theme preference or defaults to system
+ * @returns {string} Theme preference
+ */
+function getStoredTheme() {
+  return localStorage.getItem(THEME_STORAGE_KEY) || THEME_SYSTEM;
+}
+
+/**
+ * Applies the theme to the document
+ * @param {string} theme - Theme to apply ('system', 'light', or 'dark')
+ */
+function applyTheme(theme) {
+  let actualTheme = theme;
+  
+  if (theme === THEME_SYSTEM) {
+    actualTheme = getSystemTheme();
+  }
+  
+  document.documentElement.setAttribute('data-theme', actualTheme);
+  document.body.setAttribute('data-theme', actualTheme);
+}
+
+/**
+ * Updates the theme menu checkmarks and ARIA attributes
+ * @param {string} theme - Currently selected theme
+ */
+function updateThemeMenu(theme) {
+  elements.themeMenuItems.forEach(item => {
+    const value = item.getAttribute('data-theme-value');
+    const check = item.querySelector('.theme-check');
+    const isSelected = value === theme;
+    
+    // Update aria-checked
+    item.setAttribute('aria-checked', String(isSelected));
+    
+    // Update visual checkmark
+    if (isSelected) {
+      check?.removeAttribute('hidden');
+    } else {
+      check?.setAttribute('hidden', '');
+    }
+  });
+}
+
+/**
+ * Sets the theme preference
+ * @param {string} theme - Theme preference ('system', 'light', or 'dark')
+ */
+function setTheme(theme) {
+  localStorage.setItem(THEME_STORAGE_KEY, theme);
+  applyTheme(theme);
+  updateThemeMenu(theme);
+  closeThemeMenu();
+}
+
+/**
+ * Initializes the theme system
+ */
+function initializeTheme() {
+  const storedTheme = getStoredTheme();
+  applyTheme(storedTheme);
+  updateThemeMenu(storedTheme);
+  
+  // Listen for system theme changes if using system preference
+  if (storedTheme === THEME_SYSTEM) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (getStoredTheme() === THEME_SYSTEM) {
+        applyTheme(THEME_SYSTEM);
+      }
+    });
+  }
+}
+
+/**
+ * Gets the currently focused menu item index
+ * @returns {number} Index of focused item, or -1 if none
+ */
+function getFocusedMenuItemIndex() {
+  return Array.from(elements.themeMenuItems).findIndex(item => 
+    item === document.activeElement
+  );
+}
+
+/**
+ * Focuses a menu item by index
+ * @param {number} index - Index of menu item to focus
+ */
+function focusMenuItem(index) {
+  if (index >= 0 && index < elements.themeMenuItems.length) {
+    elements.themeMenuItems[index].focus();
+  }
+}
+
+/**
+ * Handles keyboard navigation in theme menu
+ * @param {KeyboardEvent} e - Keyboard event
+ */
+function handleThemeMenuKeyDown(e) {
+  if (elements.themeMenu.hidden) {
+    return;
+  }
+  
+  const currentIndex = getFocusedMenuItemIndex();
+  let newIndex = currentIndex;
+  
+  switch (e.key) {
+    case 'ArrowDown':
+      e.preventDefault();
+      newIndex = currentIndex < elements.themeMenuItems.length - 1 
+        ? currentIndex + 1 
+        : 0;
+      focusMenuItem(newIndex);
+      break;
+      
+    case 'ArrowUp':
+      e.preventDefault();
+      newIndex = currentIndex > 0 
+        ? currentIndex - 1 
+        : elements.themeMenuItems.length - 1;
+      focusMenuItem(newIndex);
+      break;
+      
+    case 'Home':
+      e.preventDefault();
+      focusMenuItem(0);
+      break;
+      
+    case 'End':
+      e.preventDefault();
+      focusMenuItem(elements.themeMenuItems.length - 1);
+      break;
+      
+    case 'Enter':
+    case ' ':
+      e.preventDefault();
+      if (currentIndex >= 0) {
+        elements.themeMenuItems[currentIndex].click();
+      }
+      break;
+      
+    case 'Escape':
+      e.preventDefault();
+      closeThemeMenu();
+      break;
+      
+    case 'Tab':
+      // Allow Tab to close menu and continue normal tab order
+      closeThemeMenu();
+      break;
+  }
+}
+
+/**
+ * Handles focus trap for theme menu
+ * @param {FocusEvent} e - Focus event
+ */
+function handleThemeMenuFocusTrap(e) {
+  if (elements.themeMenu.hidden) {
+    return;
+  }
+  
+  // focusin fires when focus enters an element
+  // If focus is entering the menu, that's fine - do nothing
+  // If focus is entering something outside the menu, check if it's a form field
+  if (!elements.themeMenu.contains(e.target) && 
+      e.target !== elements.themeToggleBtn) {
+    // Check if the target is a form field
+    const isFormField = e.target.tagName === 'INPUT' ||
+                        e.target.tagName === 'TEXTAREA' ||
+                        e.target.tagName === 'SELECT' ||
+                        e.target.closest('form');
+    
+    if (isFormField) {
+      // Allow focus to move to form fields - close menu without stealing focus
+      closeThemeMenu(true);
+      return;
+    }
+    
+    // For other elements, trap focus back to menu (keyboard navigation)
+    if (!elements.themeMenu.contains(document.activeElement)) {
+      focusMenuItem(0);
+    }
+  }
+}
+
+/**
+ * Toggles the theme menu visibility
+ */
+function toggleThemeMenu() {
+  const isHidden = elements.themeMenu.hidden;
+  elements.themeMenu.hidden = !isHidden;
+  elements.themeToggleBtn.setAttribute('aria-expanded', String(!isHidden));
+  
+  // Focus first menu item when opening
+  if (!isHidden) {
+    setTimeout(() => {
+      focusMenuItem(0);
+    }, 0);
+  }
+}
+
+/**
+ * Closes the theme menu and returns focus to toggle button
+ * @param {boolean} skipFocus - If true, don't focus the toggle button (e.g., when focus is moving to a form field)
+ */
+function closeThemeMenu(skipFocus = false) {
+  elements.themeMenu.hidden = true;
+  elements.themeToggleBtn.setAttribute('aria-expanded', 'false');
+  if (!skipFocus) {
+    elements.themeToggleBtn.focus();
+  }
+}
+
+/**
+ * Handles clicks outside the theme menu to close it
+ */
+function handleThemeMenuClickOutside(event) {
+  // Only process if menu is actually open
+  if (elements.themeMenu.hidden) {
+    return;
+  }
+  
+  // Don't close if clicking on toggle button or menu itself
+  if (elements.themeToggleBtn.contains(event.target) || 
+      elements.themeMenu.contains(event.target)) {
+    return;
+  }
+  
+  // Check if clicking on a form field - if so, close menu without stealing focus
+  const isFormField = event.target.tagName === 'INPUT' ||
+                      event.target.tagName === 'TEXTAREA' ||
+                      event.target.tagName === 'SELECT' ||
+                      event.target.closest('form');
+  
+  closeThemeMenu(isFormField);
+}
+
+// ============================================
+// Priority Dropdown Management
+// ============================================
+
+/**
+ * Generates SVG markup for a priority flag icon
+ * @param {string} priority - Priority value ('1', '2', '3', or '4')
+ * @returns {string} SVG markup string
+ */
+function getPriorityFlagSvg(priority) {
+  const flagPath = 'M4.223 4.584A.5.5 0 0 0 4 5v14.5a.5.5 0 0 0 1 0v-5.723C5.886 13.262 7.05 13 8.5 13c.97 0 1.704.178 3.342.724 1.737.58 2.545.776 3.658.776 1.759 0 3.187-.357 4.277-1.084A.5.5 0 0 0 20 13V4.5a.5.5 0 0 0-.777-.416C18.313 4.69 17.075 5 15.5 5c-.97 0-1.704-.178-3.342-.724C10.421 3.696 9.613 3.5 8.5 3.5c-1.758 0-3.187.357-4.277 1.084';
+  
+  const p4Path = 'M 4 5 a 0.5 0.5 0 0 1 0.223 -0.416 C 5.313 3.857 6.742 3.5 8.5 3.5 c 1.113 0 1.92 0.196 3.658 0.776 C 13.796 4.822 14.53 5 15.5 5 c 1.575 0 2.813 -0.31 3.723 -0.916 A 0.5 0.5 0 0 1 20 4.5 V 13 a 0.5 0.5 0 0 1 -0.223 0.416 c -1.09 0.727 -2.518 1.084 -4.277 1.084 c -1.113 0 -1.92 -0.197 -3.658 -0.776 C 10.204 13.178 9.47 13 8.5 13 c -1.45 0 -2.614 0.262 -3.5 0.777 V 19.5 a 0.5 0.5 0 0 1 -1 0 V 5 m 4.5 7 q -2.051 -0.002 -3.5 0.654 V 5.277 c 0.886 -0.515 2.05 -0.777 3.5 -0.777 c 0.97 0 1.704 0.178 3.342 0.724 c 1.737 0.58 2.545 0.776 3.658 0.776 q 2.052 0.002 3.5 -0.654 v 7.377 c -0.886 0.515 -2.05 0.777 -3.5 0.777 c -0.97 0 -1.704 -0.178 -3.342 -0.724 C 10.421 12.196 9.613 12 8.5 12';
+  
+  if (priority === '4') {
+    return `<svg class="priority-flag" width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path
+        fill="none"
+        fill-rule="evenodd"
+        d="${p4Path}"
+        clip-rule="evenodd"
+        stroke="#666"
+        stroke-width="1"
+      />
+    </svg>`;
+  }
+  
+  const colors = {
+    '1': '#d1453b',
+    '2': '#eb8909',
+    '3': '#246fe0'
+  };
+  
+  return `<svg class="priority-flag" width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path
+      fill="${colors[priority]}"
+      fill-rule="evenodd"
+      d="${flagPath}"
+      clip-rule="evenodd"
+    />
+  </svg>`;
+}
+
+/**
+ * Gets the formatted label for a priority value
+ * @param {string} priority - Priority value ('1', '2', '3', or '4')
+ * @returns {string} Formatted priority label with suffix if applicable
+ */
+function getPriorityLabel(priority) {
+  const labels = {
+    '1': 'Priority 1 (Highest)',
+    '2': 'Priority 2',
+    '3': 'Priority 3',
+    '4': 'Priority 4 (Default)'
+  };
+  return labels[priority] || `Priority ${priority}`;
+}
+
+/**
+ * Updates the displayed priority in the dropdown trigger
+ * @param {string} priority - Priority value ('1', '2', '3', or '4')
+ */
+function updatePriorityDisplay(priority) {
+  const trigger = elements.priorityTrigger;
+  if (!trigger) return;
+  
+  const content = trigger.querySelector('.priority-dropdown__content');
+  if (!content) return;
+  
+  const flagSvg = content.querySelector('.priority-flag');
+  const textSpan = content.querySelector('.priority-text');
+  
+  // Update flag icon by replacing the entire SVG
+  if (flagSvg) {
+    // Create a temporary container to parse the new SVG
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = getPriorityFlagSvg(priority);
+    const newSvg = tempDiv.firstElementChild;
+    
+    // Replace the old SVG with the new one
+    flagSvg.parentNode.replaceChild(newSvg, flagSvg);
+  }
+  
+  // Update text with formatted label (includes suffix for P1 and P4)
+  if (textSpan) {
+    textSpan.textContent = getPriorityLabel(priority);
+  }
+  
+  // Update state
+  state.priority = priority;
+  
+  // Rebuild menu to show all priorities with checkmark on selected
+  rebuildPriorityMenu();
+}
+
+/**
+ * Gets the checkmark SVG icon for selected menu items
+ * @returns {string} SVG markup string for checkmark
+ */
+function getCheckmarkSvg() {
+  return `<svg class="priority-checkmark" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M13.3333 4L6 11.3333L2.66667 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+/**
+ * Rebuilds the priority dropdown menu, showing all priorities with a checkmark on the selected one
+ */
+function rebuildPriorityMenu() {
+  const menu = elements.priorityMenu;
+  if (!menu) return;
+  
+  const currentPriority = state.priority;
+  
+  // Clear existing options
+  menu.innerHTML = '';
+  
+  // Create options for all priorities
+  const priorities = ['1', '2', '3', '4'];
+  priorities.forEach(priority => {
+    const option = document.createElement('button');
+    option.className = 'priority-dropdown__option';
+    if (priority === currentPriority) {
+      option.classList.add('priority-dropdown__option--selected');
+    }
+    option.setAttribute('role', 'menuitem');
+    option.setAttribute('data-priority', priority);
+    option.type = 'button';
+    
+    // Build option content: flag + label + checkmark (if selected)
+    let optionContent = `${getPriorityFlagSvg(priority)}<span>${getPriorityLabel(priority)}</span>`;
+    if (priority === currentPriority) {
+      optionContent += getCheckmarkSvg();
+    }
+    option.innerHTML = optionContent;
+    
+    menu.appendChild(option);
+  });
+  
+  // Update options reference
+  elements.priorityOptions = menu.querySelectorAll('.priority-dropdown__option');
+  
+  // Re-attach event listeners
+  elements.priorityOptions.forEach(option => {
+    option.addEventListener('click', handlePrioritySelection);
+  });
+}
+
+/**
+ * Toggles the priority dropdown open/closed state
+ */
+function togglePriorityDropdown() {
+  const isHidden = elements.priorityMenu.hidden;
+  elements.priorityMenu.hidden = !isHidden;
+  elements.priorityTrigger.setAttribute('aria-expanded', String(!isHidden));
+  
+  // Focus first option when opening
+  if (!isHidden && elements.priorityOptions && elements.priorityOptions.length > 0) {
+    setTimeout(() => {
+      elements.priorityOptions[0].focus();
+    }, 0);
+  }
+}
+
+/**
+ * Closes the priority dropdown
+ */
+function closePriorityDropdown() {
+  elements.priorityMenu.hidden = true;
+  elements.priorityTrigger.setAttribute('aria-expanded', 'false');
+}
+
+/**
+ * Handles priority selection from dropdown menu
+ * @param {Event} e - Click event
+ */
+function handlePrioritySelection(e) {
+  const priority = e.currentTarget.getAttribute('data-priority');
+  updatePriorityDisplay(priority);
+  closePriorityDropdown();
+  elements.priorityTrigger.focus();
+}
+
+/**
+ * Handles keyboard navigation in priority dropdown
+ * @param {KeyboardEvent} e - Keyboard event
+ */
+function handlePriorityMenuKeyDown(e) {
+  if (elements.priorityMenu.hidden) {
+    return;
+  }
+  
+  const options = Array.from(elements.priorityOptions);
+  const currentIndex = options.findIndex(opt => opt === document.activeElement);
+  let newIndex = currentIndex;
+  
+  switch (e.key) {
+    case 'ArrowDown':
+      e.preventDefault();
+      newIndex = currentIndex < options.length - 1 ? currentIndex + 1 : 0;
+      options[newIndex].focus();
+      break;
+      
+    case 'ArrowUp':
+      e.preventDefault();
+      newIndex = currentIndex > 0 ? currentIndex - 1 : options.length - 1;
+      options[newIndex].focus();
+      break;
+      
+    case 'Home':
+      e.preventDefault();
+      if (options.length > 0) {
+        options[0].focus();
+      }
+      break;
+      
+    case 'End':
+      e.preventDefault();
+      if (options.length > 0) {
+        options[options.length - 1].focus();
+      }
+      break;
+      
+    case 'Enter':
+    case ' ':
+      e.preventDefault();
+      if (currentIndex >= 0) {
+        options[currentIndex].click();
+      }
+      break;
+      
+    case 'Escape':
+      e.preventDefault();
+      closePriorityDropdown();
+      elements.priorityTrigger.focus();
+      break;
+      
+    case 'Tab':
+      closePriorityDropdown();
+      break;
+  }
+}
+
+/**
+ * Handles clicks outside the priority dropdown to close it
+ * @param {Event} event - Click event
+ */
+function handlePriorityDropdownClickOutside(event) {
+  if (elements.priorityMenu.hidden) {
+    return;
+  }
+  
+  // Don't close if clicking on trigger or menu
+  if (elements.priorityTrigger.contains(event.target) || 
+      elements.priorityMenu.contains(event.target)) {
+    return;
+  }
+  
+  closePriorityDropdown();
+}
+
+/**
+ * Initializes the priority dropdown
+ */
+function initializePriorityDropdown() {
+  // Set initial priority display
+  updatePriorityDisplay(state.priority);
+  
+  // Initialize options reference
+  elements.priorityOptions = elements.priorityMenu.querySelectorAll('.priority-dropdown__option');
+  
+  // Attach event listeners to options
+  elements.priorityOptions.forEach(option => {
+    option.addEventListener('click', handlePrioritySelection);
+  });
+}
+
+// ============================================
 // Event Listeners
 // ============================================
 
@@ -373,6 +956,106 @@ elements.copyUrlBtn.addEventListener('click', copyUrlToClipboard);
 // Download QR code button
 elements.downloadQrBtn.addEventListener('click', downloadQRCode);
 
+// Coffee button - opens Todoist Quick Add with coffee task
+elements.coffeeBtn.addEventListener('click', () => {
+  const coffeeUrl = buildCoffeeTaskUrl();
+  window.open(coffeeUrl, '_blank');
+});
+
+// Theme toggle button
+elements.themeToggleBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  toggleThemeMenu();
+});
+
+// Keyboard support for theme toggle button
+elements.themeToggleBtn.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    toggleThemeMenu();
+  } else if (e.key === 'ArrowDown' && elements.themeMenu.hidden) {
+    e.preventDefault();
+    toggleThemeMenu();
+  }
+});
+
+// Keyboard navigation for theme menu
+elements.themeMenu.addEventListener('keydown', handleThemeMenuKeyDown);
+
+// Focus trap for theme menu
+elements.themeMenu.addEventListener('focusin', handleThemeMenuFocusTrap);
+elements.themeMenu.addEventListener('focusout', (e) => {
+  // Only trap focus if menu is open and focus is not moving to a form field
+  const relatedTarget = e.relatedTarget;
+  const isFormField = relatedTarget && (
+    relatedTarget.tagName === 'INPUT' ||
+    relatedTarget.tagName === 'TEXTAREA' ||
+    relatedTarget.tagName === 'SELECT' ||
+    relatedTarget.closest('form')
+  );
+  
+  // If focus is moving to a form field, close menu and allow focus
+  if (isFormField) {
+    closeThemeMenu(true);
+    return;
+  }
+  
+  // Allow focus to move to toggle button, otherwise trap (only for keyboard nav)
+  setTimeout(() => {
+    if (!elements.themeMenu.hidden && 
+        !elements.themeMenu.contains(document.activeElement) &&
+        document.activeElement !== elements.themeToggleBtn &&
+        !isFormField) {
+      focusMenuItem(0);
+    }
+  }, 0);
+});
+
+// Theme menu items
+elements.themeMenuItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const theme = item.getAttribute('data-theme-value');
+    setTheme(theme);
+  });
+});
+
+// Close theme menu when clicking outside
+document.addEventListener('click', handleThemeMenuClickOutside);
+
+// Listen for system theme changes
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if (getStoredTheme() === THEME_SYSTEM) {
+    applyTheme(THEME_SYSTEM);
+  }
+});
+
+// Priority dropdown trigger
+if (elements.priorityTrigger) {
+  elements.priorityTrigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    togglePriorityDropdown();
+  });
+  
+  // Keyboard support for priority trigger
+  elements.priorityTrigger.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      togglePriorityDropdown();
+    } else if (e.key === 'ArrowDown' && elements.priorityMenu.hidden) {
+      e.preventDefault();
+      togglePriorityDropdown();
+    }
+  });
+}
+
+// Keyboard navigation for priority menu
+if (elements.priorityMenu) {
+  elements.priorityMenu.addEventListener('keydown', handlePriorityMenuKeyDown);
+}
+
+// Close priority dropdown when clicking outside
+document.addEventListener('click', handlePriorityDropdownClickOutside);
+
 // Initialize generate button state
 updateGenerateButtonState();
 
@@ -382,4 +1065,12 @@ updateGenerateButtonState();
 
 // Ensure output section is hidden initially
 elements.outputSection.hidden = true;
+
+// Initialize theme system
+initializeTheme();
+
+// Initialize priority dropdown
+if (elements.priorityDropdown) {
+  initializePriorityDropdown();
+}
 

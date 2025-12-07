@@ -12,7 +12,7 @@ When scanned/tapped on a phone with Todoist installed, these URLs open Todoist's
 
 ## Features
 
-- **Simple Form Interface**: Only task name is required; all other fields are optional
+- **Simple Form Interface**: Only task name is required; priority defaults to P4 (Default) and can be changed. Priority labels include descriptive suffixes for clarity: "Priority 1 (Highest)" and "Priority 4 (Default)"
 - **One-Click Generation**: Single "Generate" button creates both the URL and QR code simultaneously
 - **URL Generation**: Creates properly formatted Todoist Quick Add URLs
 - **QR Code Generation**: Automatically generates QR codes from the created URLs using goQR API
@@ -27,11 +27,11 @@ When scanned/tapped on a phone with Todoist installed, these URLs open Todoist's
 1. Enter a task name (required)
 2. Optionally add:
    - Due date (supports Todoist natural language like "today", "in 90 mins", "every Monday")
-   - Priority (P1-P4, where P1 is most urgent)
    - Project name (exact Todoist project name)
-3. Click "Generate"
-4. The URL and QR code are created automatically
-5. Optionally copy the URL or download the QR code
+3. Set priority (defaults to Priority 4 (Default); P1-P4, where P1 (Highest) is most urgent. Labels include descriptive suffixes: "Priority 1 (Highest)" and "Priority 4 (Default)")
+4. Click "Generate"
+5. The URL and QR code are created automatically
+6. Optionally copy the URL or download the QR code
 
 ## Technical Details
 
@@ -75,6 +75,8 @@ QR codes are generated using the goQR API (api.qrserver.com), providing reliable
 │   ├── tokens.css      # Design token system (primitives, semantics, modes)
 │   └── styles.css      # Component styles using tokens
 ├── app.js              # Core application logic
+├── COPY.md             # All user-visible copy documentation
+├── COPY_WORKFLOW.md    # Process for updating copy
 └── README.md           # Project documentation
 ```
 
@@ -85,6 +87,16 @@ QR codes are generated using the goQR API (api.qrserver.com), providing reliable
   - Used for reliable QR code generation without client-side libraries
 
 No build tools or package managers required. The application is a static front-end app with no runtime dependencies.
+
+## Copy Management
+
+All user-visible copy is documented in `COPY.md` with context about where and when users see it. When updating copy:
+
+1. Update the copy in `COPY.md` first (this is the single source of truth)
+2. Then update the corresponding code in `index.html` or `app.js`
+3. Follow the process outlined in `COPY_WORKFLOW.md`
+
+This ensures copy updates are tracked and the documentation stays in sync with the codebase.
 
 ## Notes
 

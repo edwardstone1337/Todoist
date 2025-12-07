@@ -3,17 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Generate Todoist task links for QR codes and NFC tags">
+  <meta name="description" content="Create Todoist task links for QR codes and NFC tags">
   <title>Todoist TapLinks</title>
   <link rel="stylesheet" href="styles/tokens.css">
   <link rel="stylesheet" href="styles/styles.css">
+  <script>
+    // Initialize theme immediately to prevent flash
+    (function() {
+      const theme = localStorage.getItem('todoist-taplinks-theme') || 'system';
+      let actualTheme = theme;
+      if (theme === 'system') {
+        actualTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', actualTheme);
+      document.body.setAttribute('data-theme', actualTheme);
+    })();
+  </script>
 </head>
-<body data-theme="light">
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <div class="container">
+    <main id="main-content">
     <!-- Header Section -->
     <header class="header">
-      <h1 class="header__title">Todoist TapLinks</h1>
-      <p class="header__subtitle">Generate Todoist task links for QR codes and NFC tags.</p>
+      <div class="header__top">
+        <h1 class="header__title">Todoist TapLinks</h1>
+        <div class="theme-toggle">
+          <button id="theme-toggle-btn" class="button button--icon" aria-label="Theme options" aria-haspopup="true" aria-expanded="false" aria-controls="theme-menu">
+            <svg class="theme-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M10 2V4M10 16V18M18 10H16M4 10H2M15.6569 4.34315L14.2426 5.75736M5.75736 14.2426L4.34315 15.6569M15.6569 15.6569L14.2426 14.2426M5.75736 5.75736L4.34315 4.34315" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+          <div id="theme-menu" class="theme-menu" role="menu" aria-orientation="vertical" aria-label="Theme selection" hidden>
+            <button class="theme-menu__item" role="menuitemradio" aria-checked="false" data-theme-value="system">
+              <span>System</span>
+              <svg class="theme-check" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" hidden>
+                <path d="M13.3333 4L6 11.3333L2.66667 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="theme-menu__item" role="menuitemradio" aria-checked="false" data-theme-value="light">
+              <span>Light</span>
+              <svg class="theme-check" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" hidden>
+                <path d="M13.3333 4L6 11.3333L2.66667 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="theme-menu__item" role="menuitemradio" aria-checked="false" data-theme-value="dark">
+              <span>Dark</span>
+              <svg class="theme-check" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" hidden>
+                <path d="M13.3333 4L6 11.3333L2.66667 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <p class="header__subtitle">Create Todoist task links for QR codes and NFC tags.</p>
     </header>
 
     <!-- Form Section -->
@@ -31,12 +75,11 @@
               id="task-name"
               name="task-name"
               class="form-input"
-              placeholder="e.g. Empty washing machine"
               required
               aria-describedby="task-name-helper task-name-error"
             >
             <p id="task-name-helper" class="form-helper">
-              Required. What should the task be called?
+              What should this task be called?
             </p>
             <p id="task-name-error" class="form-error" role="alert" aria-live="polite"></p>
           </div>
@@ -51,33 +94,83 @@
               id="due-date"
               name="due-date"
               class="form-input"
-              placeholder="e.g. today, in 90 mins, every Monday"
               aria-describedby="due-date-helper"
             >
             <p id="due-date-helper" class="form-helper">
-              Any Todoist natural language (e.g. 'today', 'in 90 mins', 'every Monday'). Leave blank for no due date.
+              Use Todoist's natural language, like "today", "in 90 mins", or "every Monday". Leave blank if you don't need a due date.
             </p>
           </div>
 
           <!-- Priority Field -->
           <div class="form-field">
             <label for="priority" class="form-label">
-              Priority <span class="form-label__optional">(optional)</span>
+              Priority
             </label>
-            <select
-              id="priority"
-              name="priority"
-              class="form-select"
-              aria-describedby="priority-helper"
-            >
-              <option value="">None</option>
-              <option value="4">Priority 4</option>
-              <option value="3">Priority 3</option>
-              <option value="2">Priority 2</option>
-              <option value="1">Priority 1</option>
-            </select>
+            <div class="priority-dropdown" id="priority-dropdown">
+              <button
+                type="button"
+                id="priority-trigger"
+                class="priority-dropdown__trigger"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-describedby="priority-helper"
+                aria-label="Priority selection"
+              >
+                <span class="priority-dropdown__content">
+                  <svg class="priority-flag" width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path
+                      fill="none"
+                      fill-rule="evenodd"
+                      d="M 4 5 a 0.5 0.5 0 0 1 0.223 -0.416 C 5.313 3.857 6.742 3.5 8.5 3.5 c 1.113 0 1.92 0.196 3.658 0.776 C 13.796 4.822 14.53 5 15.5 5 c 1.575 0 2.813 -0.31 3.723 -0.916 A 0.5 0.5 0 0 1 20 4.5 V 13 a 0.5 0.5 0 0 1 -0.223 0.416 c -1.09 0.727 -2.518 1.084 -4.277 1.084 c -1.113 0 -1.92 -0.197 -3.658 -0.776 C 10.204 13.178 9.47 13 8.5 13 c -1.45 0 -2.614 0.262 -3.5 0.777 V 19.5 a 0.5 0.5 0 0 1 -1 0 V 5 m 4.5 7 q -2.051 -0.002 -3.5 0.654 V 5.277 c 0.886 -0.515 2.05 -0.777 3.5 -0.777 c 0.97 0 1.704 0.178 3.342 0.724 c 1.737 0.58 2.545 0.776 3.658 0.776 q 2.052 0.002 3.5 -0.654 v 7.377 c -0.886 0.515 -2.05 0.777 -3.5 0.777 c -0.97 0 -1.704 -0.178 -3.342 -0.724 C 10.421 12.196 9.613 12 8.5 12"
+                      clip-rule="evenodd"
+                      stroke="#666"
+                      stroke-width="1"
+                    />
+                  </svg>
+                  <span class="priority-text">Priority 4 (Default)</span>
+                </span>
+                <svg class="priority-dropdown__icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path fill="currentColor" d="M6 9L1 4h10z"/>
+                </svg>
+              </button>
+              <div class="priority-dropdown__menu" role="menu" aria-label="Priority options" hidden>
+                <button class="priority-dropdown__option" role="menuitem" data-priority="1" type="button">
+                  <svg class="priority-flag" width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path
+                      fill="#d1453b"
+                      fill-rule="evenodd"
+                      d="M4.223 4.584A.5.5 0 0 0 4 5v14.5a.5.5 0 0 0 1 0v-5.723C5.886 13.262 7.05 13 8.5 13c.97 0 1.704.178 3.342.724 1.737.58 2.545.776 3.658.776 1.759 0 3.187-.357 4.277-1.084A.5.5 0 0 0 20 13V4.5a.5.5 0 0 0-.777-.416C18.313 4.69 17.075 5 15.5 5c-.97 0-1.704-.178-3.342-.724C10.421 3.696 9.613 3.5 8.5 3.5c-1.758 0-3.187.357-4.277 1.084"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span>Priority 1 (Highest)</span>
+                </button>
+                <button class="priority-dropdown__option" role="menuitem" data-priority="2" type="button">
+                  <svg class="priority-flag" width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path
+                      fill="#eb8909"
+                      fill-rule="evenodd"
+                      d="M4.223 4.584A.5.5 0 0 0 4 5v14.5a.5.5 0 0 0 1 0v-5.723C5.886 13.262 7.05 13 8.5 13c.97 0 1.704.178 3.342.724 1.737.58 2.545.776 3.658.776 1.759 0 3.187-.357 4.277-1.084A.5.5 0 0 0 20 13V4.5a.5.5 0 0 0-.777-.416C18.313 4.69 17.075 5 15.5 5c-.97 0-1.704-.178-3.342-.724C10.421 3.696 9.613 3.5 8.5 3.5c-1.758 0-3.187.357-4.277 1.084"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span>Priority 2</span>
+                </button>
+                <button class="priority-dropdown__option" role="menuitem" data-priority="3" type="button">
+                  <svg class="priority-flag" width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path
+                      fill="#246fe0"
+                      fill-rule="evenodd"
+                      d="M4.223 4.584A.5.5 0 0 0 4 5v14.5a.5.5 0 0 0 1 0v-5.723C5.886 13.262 7.05 13 8.5 13c.97 0 1.704.178 3.342.724 1.737.58 2.545.776 3.658.776 1.759 0 3.187-.357 4.277-1.084A.5.5 0 0 0 20 13V4.5a.5.5 0 0 0-.777-.416C18.313 4.69 17.075 5 15.5 5c-.97 0-1.704-.178-3.342-.724C10.421 3.696 9.613 3.5 8.5 3.5c-1.758 0-3.187.357-4.277 1.084"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span>Priority 3</span>
+                </button>
+              </div>
+            </div>
             <p id="priority-helper" class="form-helper">
-              Optional. Higher priority = more urgent in Todoist.
+              Higher numbers mean more urgent in Todoist.
             </p>
           </div>
 
@@ -91,11 +184,10 @@
               id="project"
               name="project"
               class="form-input"
-              placeholder="e.g. Home and Chores"
               aria-describedby="project-helper"
             >
             <p id="project-helper" class="form-helper">
-              Exact Todoist project name. Leave blank to use Inbox.
+              Use your exact Todoist project name. Leave blank to use Inbox. <strong>Note:</strong> These links work best on mobile—desktop browsers will ignore the project and default to Inbox.
             </p>
           </div>
 
@@ -121,34 +213,40 @@
             aria-describedby="url-helper"
           >
           <p id="url-helper" class="form-helper">
-            Opens Todoist Quick Add with your task (best used on mobile).
+            This link opens Todoist Quick Add with your task. Works best on mobile devices.
           </p>
         </div>
 
         <!-- Action Buttons -->
         <div class="output-actions">
-          <button id="copy-url-btn" class="button button--secondary">
+          <button id="copy-url-btn" class="button button--secondary" aria-label="Copy URL">
             Copy URL
           </button>
         </div>
 
-        <!-- Success Message -->
-        <div id="copy-success" class="success-message" role="alert" aria-live="polite">
-          Copied!
-        </div>
-
         <!-- QR Code Display -->
-        <div id="qr-container" class="qr-container" hidden>
+        <div id="qr-container" class="qr-container" hidden aria-busy="false">
           <label class="form-label">QR code for this link</label>
-          <img id="qr-image" class="qr-image" alt="QR code for Todoist task link" />
+          <div id="qr-loading" class="qr-loading" hidden>
+            <div class="qr-loading__spinner" aria-hidden="true"></div>
+            <p class="qr-loading__text" aria-live="polite">Generating QR code...</p>
+          </div>
+          <img id="qr-image" class="qr-image" alt="QR code for Todoist task link" hidden />
           <p id="qr-helper" class="form-helper">
-            Scan this QR with your phone to open Todoist Quick Add with this task.
+            Scan this QR code with your phone to open Todoist Quick Add with your task.
           </p>
-          <button id="download-qr-btn" class="button button--secondary">
+          <button id="download-qr-btn" class="button button--secondary" aria-label="Download QR code">
             Download QR
           </button>
         </div>
         <div id="qr-error" class="form-error" role="alert" aria-live="polite"></div>
+        
+        <!-- Buy Me a Coffee Button -->
+        <div id="coffee-button-container" class="coffee-button-container" hidden>
+          <button id="coffee-btn" class="button button--coffee" aria-label="Add a Todoist task to buy the creator a coffee">
+            Add coffee task ☕
+          </button>
+        </div>
       </div>
     </section>
 
@@ -157,17 +255,23 @@
       <div class="info-card">
         <h2 class="info-card__title">How it works</h2>
         <ul class="info-list">
-          <li>At minimum, only Task name is required.</li>
-          <li>If no project is entered, Todoist will use your Inbox.</li>
-          <li>URLs work best on mobile and when scanned from QR codes.</li>
-          <li>You can write this URL to an NFC tag using apps like NFC Tools.</li>
-          <li>If project name doesn't match exactly, Todoist may use Inbox instead.</li>
+          <li>Just give your task a name—that's all you need to get started.</li>
+          <li>If you don't specify a project, tasks go to your Inbox.</li>
+          <li>These links work best on mobile devices or when scanned from QR codes.</li>
+          <li>You can write the URL to an NFC tag using apps like NFC Tools.</li>
+          <li>Make sure your project name matches exactly, or Todoist will use your Inbox instead.</li>
         </ul>
         <p class="info-note">
-          <strong>Note:</strong> This is an unofficial tool for Todoist; no official affiliation.
+          <strong>Note:</strong> This is an unofficial tool and isn't affiliated with Todoist.
         </p>
       </div>
     </section>
+    </main>
+  </div>
+
+  <!-- Snackbar -->
+  <div id="snackbar" class="snackbar" role="status" aria-live="polite" aria-atomic="true" hidden>
+    <span class="snackbar__message">Link copied!</span>
   </div>
 
   <script src="app.js"></script>

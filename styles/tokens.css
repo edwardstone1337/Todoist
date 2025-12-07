@@ -189,8 +189,8 @@
   --color-background-secondary: var(--color-gray-50);
   --color-background-card: var(--color-white);
   --color-text-primary: var(--color-gray-900);
-  --color-text-secondary: var(--color-gray-600);
-  --color-text-tertiary: var(--color-gray-500);
+  --color-text-secondary: var(--color-gray-700);
+  --color-text-tertiary: var(--color-gray-600);
   --color-text-inverse: var(--color-white);
   --color-border-default: var(--color-gray-300);
   --color-border-focus: var(--color-blue-500);
@@ -202,7 +202,7 @@
   --color-button-secondary-text: var(--color-gray-900);
   --color-button-secondary-hover: var(--color-gray-200);
   --color-button-disabled-bg: var(--color-gray-200);
-  --color-button-disabled-text: var(--color-gray-400);
+  --color-button-disabled-text: var(--color-gray-500);
   --color-error: var(--color-red-500);
   --color-error-bg: var(--color-red-50);
   --color-success: var(--color-green-500);
@@ -212,29 +212,34 @@
 
 /* Color Functions - Dark Mode */
 [data-theme="dark"] {
-  --color-background-primary: var(--color-gray-900);
-  --color-background-secondary: var(--color-gray-800);
-  --color-background-card: var(--color-gray-800);
-  --color-text-primary: var(--color-gray-100);
-  --color-text-secondary: var(--color-gray-400);
-  --color-text-tertiary: var(--color-gray-500);
-  --color-text-inverse: var(--color-gray-900);
-  --color-border-default: var(--color-gray-600);
-  --color-border-focus: var(--color-blue-500);
-  --color-border-error: var(--color-red-500);
+  /* Backgrounds - Use dark colors */
+  --color-background-primary: #111827; /* Dark gray-900 equivalent */
+  --color-background-secondary: #1f2937; /* Dark gray-800 equivalent */
+  --color-background-card: #1f2937; /* Dark gray-800 equivalent */
+  /* Text - Use light colors for contrast on dark backgrounds */
+  --color-text-primary: #f3f4f6; /* Light gray-100 for high contrast */
+  --color-text-secondary: #d1d5db; /* Light gray-300 for medium contrast */
+  --color-text-tertiary: #9ca3af; /* Light gray-400 for low contrast */
+  --color-text-inverse: #111827; /* Dark for text on light backgrounds */
+  /* Borders - Use medium-light grays for visibility */
+  --color-border-default: #4b5563; /* Medium gray-600 for visibility */
+  --color-border-focus: #60a5fa; /* Lighter blue for better visibility */
+  --color-border-error: #f87171; /* Lighter red for better visibility */
+  /* Buttons */
   --color-button-primary-bg: var(--color-blue-500);
-  --color-button-primary-text: var(--color-white);
+  --color-button-primary-text: #ffffff; /* White text on blue button */
   --color-button-primary-hover: var(--color-blue-600);
-  --color-button-secondary-bg: var(--color-gray-700);
-  --color-button-secondary-text: var(--color-gray-100);
-  --color-button-secondary-hover: var(--color-gray-600);
-  --color-button-disabled-bg: var(--color-gray-700);
-  --color-button-disabled-text: var(--color-gray-500);
-  --color-error: var(--color-red-500);
-  --color-error-bg: var(--color-red-50);
-  --color-success: var(--color-green-500);
-  --color-success-bg: var(--color-green-50);
-  --color-success-text: var(--color-green-600);
+  --color-button-secondary-bg: #374151; /* Darker gray for secondary buttons */
+  --color-button-secondary-text: #f3f4f6; /* Light text on dark button */
+  --color-button-secondary-hover: #4b5563; /* Slightly lighter on hover */
+  --color-button-disabled-bg: #374151; /* Dark gray for disabled state */
+  --color-button-disabled-text: #6b7280; /* Medium gray for disabled text */
+  /* Error and Success */
+  --color-error: #f87171; /* Lighter red for better visibility */
+  --color-error-bg: #7f1d1d; /* Dark red background */
+  --color-success: #4ade80; /* Lighter green for better visibility */
+  --color-success-bg: #14532d; /* Dark green background */
+  --color-success-text: #4ade80; /* Light green text */
 }
 
 /* ============================================
