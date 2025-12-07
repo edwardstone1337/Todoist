@@ -279,7 +279,7 @@
   /* QR Code Component */
   --qr-container-padding: var(--spacing-4);
   --qr-container-border-radius: var(--radius-md);
-  --qr-container-background: var(--color-background-secondary);
+  --qr-container-background: var(--card-background);
   --qr-container-border: 1px solid var(--color-border-default);
 
   /* Output Section */

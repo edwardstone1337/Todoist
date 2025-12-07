@@ -13,6 +13,7 @@ When scanned/tapped on a phone with Todoist installed, these URLs open Todoist's
 ## Features
 
 - **Simple Form Interface**: Only task name is required; priority defaults to P4 (Default) and can be changed. Priority labels include descriptive suffixes for clarity: "Priority 1 (Highest)" and "Priority 4 (Default)"
+- **Project Field with Visual Prefix**: Project input displays a fixed "#" prefix to guide users—they type only the project name (spelling and capitalisation matter)
 - **One-Click Generation**: Single "Generate" button creates both the URL and QR code simultaneously
 - **URL Generation**: Creates properly formatted Todoist Quick Add URLs
 - **QR Code Generation**: Automatically generates QR codes from the created URLs using goQR API
@@ -20,14 +21,14 @@ When scanned/tapped on a phone with Todoist installed, these URLs open Todoist's
 - **Copy to Clipboard**: One-click URL copying with visual feedback
 - **Mobile-First Design**: Optimized for mobile devices with large tap targets
 - **Design Token System**: Built with a comprehensive 8-point spacing system and full token architecture
-- **Light/Dark Mode Support**: Token-based theme system (ready for dark mode implementation)
+- **Light/Dark Mode Support**: Fully implemented token-based theme system with system preference detection
 
 ## Usage
 
 1. Enter a task name (required)
 2. Optionally add:
    - Due date (supports Todoist natural language like "today", "in 90 mins", "every Monday")
-   - Project name (exact Todoist project name)
+   - Project name (type only the project name—the "#" prefix is shown automatically. Use your exact Todoist project name; spelling and capitalisation matter)
 3. Set priority (defaults to Priority 4 (Default); P1-P4, where P1 (Highest) is most urgent. Labels include descriptive suffixes: "Priority 1 (Highest)" and "Priority 4 (Default)")
 4. Click "Generate"
 5. The URL and QR code are created automatically
@@ -101,9 +102,9 @@ This ensures copy updates are tracked and the documentation stays in sync with t
 ## Notes
 
 - This is an unofficial tool for Todoist; no official affiliation
-- URLs work best on mobile devices
-- Project names must match exactly in Todoist; otherwise tasks go to Inbox
-- Desktop browsers may ignore project assignment via URL (mobile recommended)
+- URLs work best on mobile devices—use on mobile to keep your project assignment
+- On desktop, Todoist sends tasks to Inbox regardless of project specified in the URL
+- Project names must match exactly in Todoist (spelling and capitalisation matter); otherwise tasks go to Inbox
 
 ## License
 

@@ -2,7 +2,7 @@
 
 This document contains all user-visible copy in the Todoist TapLinks application. Each entry includes context about where and when users see it.
 
-**Last Updated:** 2024
+**Last Updated:** 2025
 
 ---
 
@@ -89,7 +89,7 @@ This document contains all user-visible copy in the Todoist TapLinks application
 ### COPY-012: Task Name Helper Text
 - **Location:** `index.html` - `#task-name-helper`
 - **Context:** Visible below the task name input field
-- **Current Copy:** `What should this task be called?`
+- **Current Copy:** `Type the task as you'd naturally say it.`
 - **Type:** Static HTML
 
 ### COPY-013: Task Name Error Message
@@ -105,16 +105,15 @@ This document contains all user-visible copy in the Todoist TapLinks application
 - **Type:** Static HTML
 
 ### COPY-015: Due Date Optional Indicator
-- **Location:** `index.html` - `.form-label__optional` within due date label
-- **Context:** Visible next to "Due date" label
-- **Current Copy:** `(optional)`
-- **Type:** Static HTML
+- **Status:** Deprecated - Removed as optional fields are now implied (only task name is marked as required)
+- **Previous Location:** `index.html` - `.form-label__optional` within due date label
+- **Previous Copy:** `(optional)`
 
 ### COPY-016: Due Date Helper Text
 - **Location:** `index.html` - `#due-date-helper`
 - **Context:** Visible below the due date input field
-- **Current Copy:** `Use Todoist's natural language, like "today", "in 90 mins", or "every Monday". Leave blank if you don't need a due date.`
-- **Type:** Static HTML
+- **Current Copy:** `Use natural language like "today", "in 90 mins", or "every Monday". <a href="https://www.todoist.com/help/articles/introduction-to-dates-and-time-q7VobO#h_01HD1A9MAEMR98FZT5FG6ZZB73" target="_blank" rel="noopener noreferrer">Learn more</a>.`
+- **Type:** Static HTML (contains HTML link)
 
 ### COPY-017: Priority Label
 - **Location:** `index.html` - `.form-label` for `#priority-dropdown`
@@ -134,28 +133,27 @@ This document contains all user-visible copy in the Todoist TapLinks application
 - **Previous Copy:** `None`
 
 ### COPY-020: Priority Helper Text
-- **Location:** `index.html` - `#priority-helper`
-- **Context:** Visible below the priority dropdown
-- **Current Copy:** `Higher numbers mean more urgent in Todoist.`
-- **Type:** Static HTML
+- **Status:** Deprecated - Removed as priority flags now provide sufficient visual indication
+- **Previous Location:** `index.html` - `#priority-helper`
+- **Previous Copy:** `Higher numbers mean more urgent in Todoist.`
 
 ### COPY-021: Project Label
 - **Location:** `index.html` - `.form-label` for `#project`
 - **Context:** Visible above the project input field
 - **Current Copy:** `Project`
 - **Type:** Static HTML
+- **Note:** The Project input displays a fixed, non-editable "#" prefix to guide users. Users type only the project name (not the "#").
 
 ### COPY-022: Project Optional Indicator
-- **Location:** `index.html` - `.form-label__optional` within project label
-- **Context:** Visible next to "Project" label
-- **Current Copy:** `(optional)`
-- **Type:** Static HTML
+- **Status:** Deprecated - Removed as optional fields are now implied (only task name is marked as required)
+- **Previous Location:** `index.html` - `.form-label__optional` within project label
+- **Previous Copy:** `(optional)`
 
 ### COPY-023: Project Helper Text
 - **Location:** `index.html` - `#project-helper`
 - **Context:** Visible below the project input field
-- **Current Copy:** `Use your exact Todoist project name. Leave blank to use Inbox. **Note:** These links work best on mobile—desktop browsers will ignore the project and default to Inbox.`
-- **Type:** Static HTML (contains HTML formatting)
+- **Current Copy:** `Leave blank to send the task to your Inbox, or use your project's exact name (spelling and capitalisation matter).`
+- **Type:** Static HTML
 
 ### COPY-024: Generate Button
 - **Location:** `index.html` - `#generate-btn`
@@ -176,7 +174,7 @@ This document contains all user-visible copy in the Todoist TapLinks application
 ### COPY-026: Generated URL Helper Text
 - **Location:** `index.html` - `#url-helper`
 - **Context:** Visible below the generated URL input field
-- **Current Copy:** `This link opens Todoist Quick Add with your task. Works best on mobile devices.`
+- **Current Copy:** `This link opens Todoist Quick Add with your task. Use it on mobile to keep your project. On desktop, Todoist sends the task to Inbox.`
 - **Type:** Static HTML
 
 ### COPY-027: Copy URL Button (Default State)
@@ -205,7 +203,7 @@ This document contains all user-visible copy in the Todoist TapLinks application
 
 ### COPY-031: Output Section Success (Aria Label)
 - **Location:** `app.js` - `handleFormSubmit()` function
-- **Context:** Screen reader announcement when link is successfully generated
+- **Context:** Screen reader announcement when link is successfully generated (announced via aria-live region, not focus)
 - **Current Copy:** `Todoist link generated successfully`
 - **Type:** Dynamic JavaScript
 
@@ -224,7 +222,7 @@ This document contains all user-visible copy in the Todoist TapLinks application
 ### COPY-034: QR Code Helper Text
 - **Location:** `index.html` - `#qr-helper`
 - **Context:** Visible below QR code image
-- **Current Copy:** `Scan this QR code with your phone to open Todoist Quick Add with your task.`
+- **Current Copy:** `Scan this QR code to open Todoist Quick Add with your task. Scanning on mobile keeps your project. On desktop, Todoist sends the task to Inbox.`
 - **Type:** Static HTML
 
 ### COPY-035: Download QR Button
@@ -324,14 +322,20 @@ This document contains all user-visible copy in the Todoist TapLinks application
 ### COPY-048: Coffee Button Label
 - **Location:** `index.html` - `#coffee-btn`
 - **Context:** Visible in output section after URL/QR code is generated, below the QR code container
-- **Current Copy:** `Add coffee task ☕`
+- **Current Copy:** `Add a task to tip this tool's creator`
 - **Type:** Static HTML
 
 ### COPY-049: Coffee Button (Aria Label)
 - **Location:** `index.html` - `#coffee-btn` aria-label
 - **Context:** Screen reader announcement for coffee button
-- **Current Copy:** `Add a Todoist task to buy the creator a coffee`
+- **Current Copy:** `Add a task to tip this tool's creator`
 - **Type:** Static HTML (aria-label)
+
+### COPY-050: Coffee Button Helper Text
+- **Location:** `index.html` - `.form-helper` within `#coffee-button-container`
+- **Context:** Visible below the coffee button
+- **Current Copy:** `Opens Todoist Quick Add with a task to tip the creator of this tool. 😊`
+- **Type:** Static HTML
 
 ---
 

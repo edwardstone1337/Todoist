@@ -79,7 +79,7 @@
               aria-describedby="task-name-helper task-name-error"
             >
             <p id="task-name-helper" class="form-helper">
-              What should this task be called?
+              Type the task as you'd naturally say it.
             </p>
             <p id="task-name-error" class="form-error" role="alert" aria-live="polite"></p>
           </div>
@@ -87,7 +87,7 @@
           <!-- Due Date Field -->
           <div class="form-field">
             <label for="due-date" class="form-label">
-              Due date <span class="form-label__optional">(optional)</span>
+              Due date
             </label>
             <input
               type="text"
@@ -97,7 +97,7 @@
               aria-describedby="due-date-helper"
             >
             <p id="due-date-helper" class="form-helper">
-              Use Todoist's natural language, like "today", "in 90 mins", or "every Monday". Leave blank if you don't need a due date.
+              Use natural language like "today", "in 90 mins", or "every Monday". <a href="https://www.todoist.com/help/articles/introduction-to-dates-and-time-q7VobO#h_01HD1A9MAEMR98FZT5FG6ZZB73" target="_blank" rel="noopener noreferrer">Learn more</a>.
             </p>
           </div>
 
@@ -169,25 +169,25 @@
                 </button>
               </div>
             </div>
-            <p id="priority-helper" class="form-helper">
-              Higher numbers mean more urgent in Todoist.
-            </p>
           </div>
 
           <!-- Project Field -->
           <div class="form-field">
             <label for="project" class="form-label">
-              Project <span class="form-label__optional">(optional)</span>
+              Project
             </label>
-            <input
-              type="text"
-              id="project"
-              name="project"
-              class="form-input"
-              aria-describedby="project-helper"
-            >
+            <div class="project-input-wrapper">
+              <span class="project-input-prefix" aria-hidden="true">#</span>
+              <input
+                type="text"
+                id="project"
+                name="project"
+                class="form-input"
+                aria-describedby="project-helper"
+              >
+            </div>
             <p id="project-helper" class="form-helper">
-              Use your exact Todoist project name. Leave blank to use Inbox. <strong>Note:</strong> These links work best on mobile—desktop browsers will ignore the project and default to Inbox.
+              Leave blank to send the task to your Inbox, or use your project's exact name (spelling and capitalisation matter).
             </p>
           </div>
 
@@ -213,7 +213,7 @@
             aria-describedby="url-helper"
           >
           <p id="url-helper" class="form-helper">
-            This link opens Todoist Quick Add with your task. Works best on mobile devices.
+            This link opens Todoist Quick Add with your task. Use it on mobile to keep your project. On desktop, Todoist sends the task to Inbox.
           </p>
         </div>
 
@@ -233,7 +233,7 @@
           </div>
           <img id="qr-image" class="qr-image" alt="QR code for Todoist task link" hidden />
           <p id="qr-helper" class="form-helper">
-            Scan this QR code with your phone to open Todoist Quick Add with your task.
+            Scan this QR code to open Todoist Quick Add with your task. Scanning on mobile keeps your project. On desktop, Todoist sends the task to Inbox.
           </p>
           <button id="download-qr-btn" class="button button--secondary" aria-label="Download QR code">
             Download QR
@@ -241,11 +241,19 @@
         </div>
         <div id="qr-error" class="form-error" role="alert" aria-live="polite"></div>
         
+        <!-- Buy Me a Coffee Button (External) -->
+        <div id="bmc-button-container" class="bmc-button-container" hidden>
+          <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="edthedesigner" data-color="#FFDD00" data-emoji=""  data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff" ></script>
+        </div>
+        
         <!-- Buy Me a Coffee Button -->
         <div id="coffee-button-container" class="coffee-button-container" hidden>
-          <button id="coffee-btn" class="button button--coffee" aria-label="Add a Todoist task to buy the creator a coffee">
-            Add coffee task ☕
+          <button id="coffee-btn" class="button button--coffee" aria-label="Add a task to tip this tool's creator">
+            Add a task to tip this tool's creator
           </button>
+          <p class="form-helper">
+            Opens Todoist Quick Add with a task to tip the creator of this tool. 😊
+          </p>
         </div>
       </div>
     </section>

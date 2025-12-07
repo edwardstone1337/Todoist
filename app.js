@@ -43,6 +43,7 @@ const elements = {
   themeToggleBtn: document.getElementById('theme-toggle-btn'),
   themeMenu: document.getElementById('theme-menu'),
   themeMenuItems: document.querySelectorAll('.theme-menu__item'),
+  bmcButtonContainer: document.getElementById('bmc-button-container'),
   coffeeButtonContainer: document.getElementById('coffee-button-container'),
   coffeeBtn: document.getElementById('coffee-btn')
 };
@@ -179,7 +180,8 @@ function handleFormSubmit(e) {
   elements.generatedUrlInput.value = state.generatedUrl;
   elements.outputSection.hidden = false;
   
-  // Show coffee button after successful generation
+  // Show coffee buttons after successful generation
+  elements.bmcButtonContainer.hidden = false;
   elements.coffeeButtonContainer.hidden = false;
   
   // Reset copy button state if it was in "Copied" state
@@ -194,12 +196,8 @@ function handleFormSubmit(e) {
   // Scroll to output section
   elements.outputSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   
-  // Move focus to generated URL field for screen reader announcement
-  setTimeout(() => {
-    elements.generatedUrlInput.focus();
-    // Announce generation success to screen readers
-    elements.outputSection.setAttribute('aria-label', 'Todoist link generated successfully');
-  }, 100);
+  // Announce generation success to screen readers via aria-live region
+  elements.outputSection.setAttribute('aria-label', 'Todoist link generated successfully');
 }
 
 // ============================================
