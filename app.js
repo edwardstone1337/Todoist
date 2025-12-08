@@ -357,12 +357,45 @@ function clearQRError() {
 }
 
 /**
+ * Sanitizes a task name for use in a filename
+ * @param {string} taskName - Task name to sanitize
+ * @returns {string} Sanitized task name, or empty string if invalid
+ */
+function sanitizeTaskNameForFilename(taskName) {
+  if (!taskName || !taskName.trim()) {
+    return '';
+  }
+  
+  // Remove invalid filesystem characters: / \ : * ? " < > |
+  let sanitized = taskName.trim()
+    .replace(/[/\\:*?"<>|]/g, '')
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+    .replace(/^-+|-+$/g, ''); // Trim leading/trailing hyphens
+  
+  // Limit length to 100 characters
+  if (sanitized.length > 100) {
+    sanitized = sanitized.substring(0, 100);
+    // Remove trailing hyphen if truncation created one
+    sanitized = sanitized.replace(/-+$/, '');
+  }
+  
+  return sanitized;
+}
+
+/**
  * Downloads QR code as PNG
  */
 async function downloadQRCode() {
   if (!state.qrGenerated || !elements.qrImage || !elements.qrImage.src) {
     return;
   }
+  
+  // Generate filename with task name
+  const sanitizedTaskName = sanitizeTaskNameForFilename(state.taskName);
+  const filename = sanitizedTaskName 
+    ? `todoist-${sanitizedTaskName}-qr.png`
+    : 'todoist-task-qr.png';
   
   try {
     // Fetch the QR code image
@@ -379,7 +412,7 @@ async function downloadQRCode() {
     
     // Create download link
     const link = document.createElement('a');
-    link.download = 'todoist-task-qr.png';
+    link.download = filename;
     link.href = objectUrl;
     
     // Trigger download
@@ -396,7 +429,7 @@ async function downloadQRCode() {
     console.error('Error downloading QR code:', error);
     // Fallback: try to download using the image src directly
     const link = document.createElement('a');
-    link.download = 'todoist-task-qr.png';
+    link.download = filename;
     link.href = elements.qrImage.src;
     link.target = '_blank';
     document.body.appendChild(link);
