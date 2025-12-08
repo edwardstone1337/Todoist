@@ -113,6 +113,7 @@ function validateTaskName(taskName) {
  * Updates the generate button state based on validation
  */
 function updateGenerateButtonState() {
+  if (!elements.generateBtn) return;
   const isValid = validateTaskName(state.taskName);
   elements.generateBtn.disabled = !isValid;
 }
@@ -122,6 +123,7 @@ function updateGenerateButtonState() {
  * @param {string} message - Error message to display
  */
 function showTaskNameError(message) {
+  if (!elements.taskNameError || !elements.taskNameInput) return;
   elements.taskNameError.textContent = message;
   elements.taskNameInput.setAttribute('aria-invalid', 'true');
 }
@@ -130,6 +132,7 @@ function showTaskNameError(message) {
  * Clears error message for task name field
  */
 function clearTaskNameError() {
+  if (!elements.taskNameError || !elements.taskNameInput) return;
   elements.taskNameError.textContent = '';
   elements.taskNameInput.removeAttribute('aria-invalid');
 }
@@ -142,8 +145,10 @@ function clearTaskNameError() {
  * Handles task name input changes
  */
 function handleTaskNameChange() {
+  if (!elements.taskNameInput) return;
   state.taskName = elements.taskNameInput.value;
   updateGenerateButtonState();
+  saveFormData();
   
   if (validateTaskName(state.taskName)) {
     clearTaskNameError();
@@ -198,6 +203,77 @@ function handleFormSubmit(e) {
   
   // Announce generation success to screen readers via aria-live region
   elements.outputSection.setAttribute('aria-label', 'Todoist link generated successfully');
+}
+
+// ============================================
+// Form Data Persistence
+// ============================================
+
+const FORM_STORAGE_KEY = 'taskgen-form-data';
+
+/**
+ * Saves form data to localStorage
+ */
+function saveFormData() {
+  if (!elements.form) return;
+  
+  const formData = {
+    taskName: elements.taskNameInput?.value || '',
+    dueDate: elements.dueDateInput?.value || '',
+    priority: state.priority || '4',
+    project: elements.projectInput?.value || ''
+  };
+  
+  try {
+    localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(formData));
+  } catch (err) {
+    console.error('Failed to save form data:', err);
+  }
+}
+
+/**
+ * Restores form data from localStorage
+ */
+function restoreFormData() {
+  if (!elements.form) return;
+  
+  try {
+    const savedData = localStorage.getItem(FORM_STORAGE_KEY);
+    if (!savedData) return;
+    
+    const formData = JSON.parse(savedData);
+    
+    // Restore task name
+    if (elements.taskNameInput && formData.taskName) {
+      elements.taskNameInput.value = formData.taskName;
+      state.taskName = formData.taskName;
+    }
+    
+    // Restore due date
+    if (elements.dueDateInput && formData.dueDate) {
+      elements.dueDateInput.value = formData.dueDate;
+      state.dueDate = formData.dueDate;
+    }
+    
+    // Restore priority
+    if (formData.priority) {
+      state.priority = formData.priority;
+      if (elements.priorityDropdown) {
+        updatePriorityDisplay(formData.priority);
+      }
+    }
+    
+    // Restore project
+    if (elements.projectInput && formData.project) {
+      elements.projectInput.value = formData.project;
+      state.project = formData.project;
+    }
+    
+    // Update generate button state
+    updateGenerateButtonState();
+  } catch (err) {
+    console.error('Failed to restore form data:', err);
+  }
 }
 
 // ============================================
@@ -483,6 +559,7 @@ function applyTheme(theme) {
  * @param {string} theme - Currently selected theme
  */
 function updateThemeMenu(theme) {
+  if (!elements.themeMenuItems || elements.themeMenuItems.length === 0) return;
   elements.themeMenuItems.forEach(item => {
     const value = item.getAttribute('data-theme-value');
     const check = item.querySelector('.theme-check');
@@ -645,6 +722,7 @@ function handleThemeMenuFocusTrap(e) {
  * Toggles the theme menu visibility
  */
 function toggleThemeMenu() {
+  if (!elements.themeMenu || !elements.themeToggleBtn) return;
   const isHidden = elements.themeMenu.hidden;
   elements.themeMenu.hidden = !isHidden;
   elements.themeToggleBtn.setAttribute('aria-expanded', String(!isHidden));
@@ -662,6 +740,7 @@ function toggleThemeMenu() {
  * @param {boolean} skipFocus - If true, don't focus the toggle button (e.g., when focus is moving to a form field)
  */
 function closeThemeMenu(skipFocus = false) {
+  if (!elements.themeMenu || !elements.themeToggleBtn) return;
   elements.themeMenu.hidden = true;
   elements.themeToggleBtn.setAttribute('aria-expanded', 'false');
   if (!skipFocus) {
@@ -673,6 +752,7 @@ function closeThemeMenu(skipFocus = false) {
  * Handles clicks outside the theme menu to close it
  */
 function handleThemeMenuClickOutside(event) {
+  if (!elements.themeMenu || !elements.themeToggleBtn) return;
   // Only process if menu is actually open
   if (elements.themeMenu.hidden) {
     return;
@@ -874,6 +954,7 @@ function handlePrioritySelection(e) {
   updatePriorityDisplay(priority);
   closePriorityDropdown();
   elements.priorityTrigger.focus();
+  saveFormData();
 }
 
 /**
@@ -974,81 +1055,113 @@ function initializePriorityDropdown() {
 // Event Listeners
 // ============================================
 
-// Form submission
-elements.form.addEventListener('submit', handleFormSubmit);
+// Form submission (only if form exists)
+if (elements.form) {
+  elements.form.addEventListener('submit', handleFormSubmit);
+}
 
-// Real-time validation on task name input
-elements.taskNameInput.addEventListener('input', handleTaskNameChange);
-elements.taskNameInput.addEventListener('blur', handleTaskNameChange);
+// Real-time validation on task name input (only if input exists)
+if (elements.taskNameInput) {
+  elements.taskNameInput.addEventListener('input', handleTaskNameChange);
+  elements.taskNameInput.addEventListener('blur', handleTaskNameChange);
+}
 
-// Copy URL button
-elements.copyUrlBtn.addEventListener('click', copyUrlToClipboard);
-
-// Download QR code button
-elements.downloadQrBtn.addEventListener('click', downloadQRCode);
-
-// Coffee button - opens Todoist Quick Add with coffee task
-elements.coffeeBtn.addEventListener('click', () => {
-  const coffeeUrl = buildCoffeeTaskUrl();
-  window.open(coffeeUrl, '_blank');
-});
-
-// Theme toggle button
-elements.themeToggleBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  toggleThemeMenu();
-});
-
-// Keyboard support for theme toggle button
-elements.themeToggleBtn.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    toggleThemeMenu();
-  } else if (e.key === 'ArrowDown' && elements.themeMenu.hidden) {
-    e.preventDefault();
-    toggleThemeMenu();
-  }
-});
-
-// Keyboard navigation for theme menu
-elements.themeMenu.addEventListener('keydown', handleThemeMenuKeyDown);
-
-// Focus trap for theme menu
-elements.themeMenu.addEventListener('focusin', handleThemeMenuFocusTrap);
-elements.themeMenu.addEventListener('focusout', (e) => {
-  // Only trap focus if menu is open and focus is not moving to a form field
-  const relatedTarget = e.relatedTarget;
-  const isFormField = relatedTarget && (
-    relatedTarget.tagName === 'INPUT' ||
-    relatedTarget.tagName === 'TEXTAREA' ||
-    relatedTarget.tagName === 'SELECT' ||
-    relatedTarget.closest('form')
-  );
-  
-  // If focus is moving to a form field, close menu and allow focus
-  if (isFormField) {
-    closeThemeMenu(true);
-    return;
-  }
-  
-  // Allow focus to move to toggle button, otherwise trap (only for keyboard nav)
-  setTimeout(() => {
-    if (!elements.themeMenu.hidden && 
-        !elements.themeMenu.contains(document.activeElement) &&
-        document.activeElement !== elements.themeToggleBtn &&
-        !isFormField) {
-      focusMenuItem(0);
-    }
-  }, 0);
-});
-
-// Theme menu items
-elements.themeMenuItems.forEach(item => {
-  item.addEventListener('click', () => {
-    const theme = item.getAttribute('data-theme-value');
-    setTheme(theme);
+// Save form data on due date input changes (only if input exists)
+if (elements.dueDateInput) {
+  elements.dueDateInput.addEventListener('input', () => {
+    state.dueDate = elements.dueDateInput.value;
+    saveFormData();
   });
-});
+}
+
+// Save form data on project input changes (only if input exists)
+if (elements.projectInput) {
+  elements.projectInput.addEventListener('input', () => {
+    state.project = elements.projectInput.value;
+    saveFormData();
+  });
+}
+
+// Copy URL button (only if button exists)
+if (elements.copyUrlBtn) {
+  elements.copyUrlBtn.addEventListener('click', copyUrlToClipboard);
+}
+
+// Download QR code button (only if button exists)
+if (elements.downloadQrBtn) {
+  elements.downloadQrBtn.addEventListener('click', downloadQRCode);
+}
+
+// Coffee button - opens Todoist Quick Add with coffee task (only if button exists)
+if (elements.coffeeBtn) {
+  elements.coffeeBtn.addEventListener('click', () => {
+    const coffeeUrl = buildCoffeeTaskUrl();
+    window.open(coffeeUrl, '_blank');
+  });
+}
+
+// Theme toggle button (only if button exists)
+if (elements.themeToggleBtn) {
+  elements.themeToggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleThemeMenu();
+  });
+
+  // Keyboard support for theme toggle button
+  elements.themeToggleBtn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleThemeMenu();
+    } else if (e.key === 'ArrowDown' && elements.themeMenu.hidden) {
+      e.preventDefault();
+      toggleThemeMenu();
+    }
+  });
+}
+
+// Keyboard navigation for theme menu (only if menu exists)
+if (elements.themeMenu) {
+  elements.themeMenu.addEventListener('keydown', handleThemeMenuKeyDown);
+
+  // Focus trap for theme menu
+  elements.themeMenu.addEventListener('focusin', handleThemeMenuFocusTrap);
+  elements.themeMenu.addEventListener('focusout', (e) => {
+    // Only trap focus if menu is open and focus is not moving to a form field
+    const relatedTarget = e.relatedTarget;
+    const isFormField = relatedTarget && (
+      relatedTarget.tagName === 'INPUT' ||
+      relatedTarget.tagName === 'TEXTAREA' ||
+      relatedTarget.tagName === 'SELECT' ||
+      relatedTarget.closest('form')
+    );
+    
+    // If focus is moving to a form field, close menu and allow focus
+    if (isFormField) {
+      closeThemeMenu(true);
+      return;
+    }
+    
+    // Allow focus to move to toggle button, otherwise trap (only for keyboard nav)
+    setTimeout(() => {
+      if (!elements.themeMenu.hidden && 
+          !elements.themeMenu.contains(document.activeElement) &&
+          document.activeElement !== elements.themeToggleBtn &&
+          !isFormField) {
+        focusMenuItem(0);
+      }
+    }, 0);
+  });
+}
+
+// Theme menu items (only if items exist)
+if (elements.themeMenuItems && elements.themeMenuItems.length > 0) {
+  elements.themeMenuItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const theme = item.getAttribute('data-theme-value');
+      setTheme(theme);
+    });
+  });
+}
 
 // Close theme menu when clicking outside
 document.addEventListener('click', handleThemeMenuClickOutside);
@@ -1087,21 +1200,30 @@ if (elements.priorityMenu) {
 // Close priority dropdown when clicking outside
 document.addEventListener('click', handlePriorityDropdownClickOutside);
 
-// Initialize generate button state
-updateGenerateButtonState();
+// Initialize generate button state (only if button exists)
+if (elements.generateBtn) {
+  updateGenerateButtonState();
+}
 
 // ============================================
 // Initialization
 // ============================================
 
-// Ensure output section is hidden initially
-elements.outputSection.hidden = true;
+// Ensure output section is hidden initially (only if section exists)
+if (elements.outputSection) {
+  elements.outputSection.hidden = true;
+}
 
 // Initialize theme system
 initializeTheme();
 
-// Initialize priority dropdown
+// Initialize priority dropdown (only if dropdown exists)
 if (elements.priorityDropdown) {
   initializePriorityDropdown();
+}
+
+// Restore form data on page load (only if form exists)
+if (elements.form) {
+  restoreFormData();
 }
 
