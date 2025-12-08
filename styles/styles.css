@@ -190,21 +190,24 @@ body {
     padding-left: var(--spacing-4);
     padding-right: var(--spacing-4);
     padding-bottom: var(--spacing-2);
-    /* Use flex layout with space-between for far left/right alignment */
-    display: flex;
-    flex-direction: row;
+    /* Use grid layout with three equal columns to center links perfectly */
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: auto;
     align-items: center;
-    justify-content: space-between;
     gap: var(--spacing-3);
   }
   
   .nav__title {
     font-size: 36px;
-    flex: 0 0 auto;
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
   }
   
   .nav__links {
-    flex: 0 1 auto;
+    grid-column: 2;
+    grid-row: 1;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -213,7 +216,9 @@ body {
   }
   
   .theme-toggle {
-    flex: 0 0 auto;
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
   }
 
   .nav__link--active::after {
