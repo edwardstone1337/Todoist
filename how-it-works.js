@@ -95,6 +95,10 @@ function initAccordions() {
 
 // Use case URLs and task titles
 const useCaseData = {
+  0: {
+    url: 'https://todoist.com/add?',
+    taskTitle: 'Blank Quick Add'
+  },
   1: {
     url: 'https://todoist.com/add?content=Empty%20dishwasher&date=in%202%20hours&priority=3',
     taskTitle: 'Empty dishwasher'
@@ -123,6 +127,7 @@ const useCaseData = {
 
 // Legacy support - keep useCaseUrls for existing code
 const useCaseUrls = {
+  0: useCaseData[0].url,
   1: useCaseData[1].url,
   2: useCaseData[2].url,
   3: useCaseData[3].url,
@@ -305,6 +310,43 @@ function initUseCaseButtons() {
 }
 
 // ============================================
+// Anchor Link Smooth Scrolling
+// ============================================
+
+/**
+ * Initialize smooth scrolling for anchor links (handles nav offset)
+ * Excludes TOC links which have their own handler
+ */
+function initAnchorLinkSmoothScroll() {
+  // Handle anchor links that aren't TOC links
+  document.querySelectorAll('a[href^="#"]:not(.toc-link)').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        const targetId = href.substring(1);
+        const targetElement = document.getElementById(targetId);
+        
+        if (targetElement) {
+          e.preventDefault();
+          
+          // Calculate offset for sticky nav
+          const navHeight = document.querySelector('.nav')?.offsetHeight || 0;
+          const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navHeight - 20;
+          
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+          
+          // Update URL without triggering scroll
+          history.pushState(null, '', href);
+        }
+      }
+    });
+  });
+}
+
+// ============================================
 // Initialize All Features
 // ============================================
 
@@ -318,6 +360,7 @@ function initHowItWorksPage() {
   }
   
   initTOCSmoothScroll();
+  initAnchorLinkSmoothScroll();
   initAccordions();
   initUseCaseButtons();
 }
