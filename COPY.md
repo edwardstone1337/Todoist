@@ -339,6 +339,24 @@ This document contains all user-visible copy in the Todoist TapLinks application
 
 ---
 
+## How It Works Page
+
+### COPY-051: Use Case "Add Task" Button
+- **Location:** `how-it-works.html` - All use case buttons with `data-action="add-task"`
+- **Context:** Visible in each use case example, opens Todoist Quick Add with pre-filled task
+- **Current Copy:** `Add this task in Todoist`
+- **Type:** Static HTML
+- **Note:** All use case "Add task" buttons use the `button--coffee` class (red style) for consistency
+
+### COPY-052: Use Case Button Helper Text
+- **Location:** `how-it-works.html` - Below each use case button group
+- **Context:** Visible below all use case buttons to inform users about Todoist requirement
+- **Current Copy:** `Note: Requires Todoist app installed on your device`
+- **Type:** Static HTML
+- **Note:** Appears below all 6 use case examples (Empty dishwasher, Move laundry, Check leftovers, Water plants, Come back for tea, Buy NFC tags)
+
+---
+
 ## Notes
 
 - All copy should maintain a friendly, conversational tone

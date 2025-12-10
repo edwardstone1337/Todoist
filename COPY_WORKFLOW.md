@@ -22,7 +22,7 @@ After updating `COPY.md`, update the corresponding code:
 
 #### For Static HTML Copy (Most Items)
 
-1. Open `index.html`
+1. Open the appropriate HTML file (`index.html` or `how-it-works.html`)
 2. Find the element using the **Location** information from `COPY.md`
 3. Update the text content directly in the HTML
 4. If the copy contains HTML formatting (like `<strong>`), preserve it
@@ -71,6 +71,16 @@ Test the updated copy:
 4. Update the text content inside the `<p>` tag
 5. Verify the change appears correctly on the page
 
+### Example 1b: Updating Use Case Button Helper Text
+
+**Scenario:** Update the use case button helper text on how-it-works page
+
+1. In `COPY.md`, find `COPY-052: Use Case Button Helper Text`
+2. Update the **Current Copy** field
+3. In `how-it-works.html`, find all instances of the helper text below use case buttons
+4. Update the text content inside the `<p>` tags
+5. Verify the change appears correctly on all use cases
+
 ### Example 2: Updating Dynamic Error Message
 
 **Scenario:** Update the task name error message
@@ -106,6 +116,7 @@ Test the updated copy:
 ### By File
 
 - **`index.html`**: Most static copy, labels, helper text, buttons, info section
+- **`how-it-works.html`**: Use case buttons, helper text, section content
 - **`app.js`**: Dynamic copy, error messages, button state changes, aria-label updates
 
 ### By Type

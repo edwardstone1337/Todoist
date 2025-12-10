@@ -30,95 +30,459 @@
   </script>
   <div class="container">
     <main id="main-content">
-    <!-- Page Heading -->
-    <h1 class="page-heading">How TaskGen works</h1>
+      <!-- Page Heading -->
+      <h1 class="page-heading">How TaskGen Works</h1>
+      <p class="info-text" style="text-align: center; margin-bottom: var(--spacing-section-margin);">
+        TaskGen creates Todoist task links and QR codes that open Quick Add with your task already filled in. It is ideal for NFC tags, printed reminders, shortcuts, and everyday routines.
+      </p>
 
-    <!-- What is TaskGen Section -->
-    <section class="info-section">
-      <div class="card">
-        <h2 class="info-card__title">What TaskGen is</h2>
-        <p class="info-text">
-          TaskGen is a simple tool that helps you create Todoist task links quickly. These links can be used with QR codes and NFC tags to capture tasks instantly from anywhere.
-        </p>
-      </div>
-    </section>
+      <!-- Table of Contents -->
+      <section class="info-section">
+        <div class="card">
+          <h2 class="info-card__title">Contents</h2>
+          <nav class="toc-nav" aria-label="Table of contents">
+            <ul class="toc-list">
+              <li><a href="#how-taskgen-works" class="toc-link">How TaskGen works</a></li>
+              <li><a href="#what-is-todoist-quick-add" class="toc-link">What is Todoist Quick Add</a></li>
+              <li><a href="#what-is-todoist-task-link" class="toc-link">What is a Todoist task link</a></li>
+              <li><a href="#how-to-create-task-link" class="toc-link">How to create a task link</a></li>
+              <li><a href="#what-you-can-do" class="toc-link">What you can do with your link</a></li>
+              <li><a href="#what-is-nfc-tag" class="toc-link">What is an NFC tag</a></li>
+              <li><a href="#how-to-write-nfc" class="toc-link">How to write your link to an NFC tag</a></li>
+              <li><a href="#popular-use-cases" class="toc-link">Popular use cases</a></li>
+              <li><a href="#tips-for-best-results" class="toc-link">Tips for best results</a></li>
+              <li><a href="#troubleshooting" class="toc-link">Troubleshooting</a></li>
+              <li><a href="#about-taskgen" class="toc-link">About TaskGen</a></li>
+            </ul>
+          </nav>
+        </div>
+      </section>
 
-    <!-- What is Todoist Section -->
-    <section class="info-section">
-      <div class="card">
-        <h2 class="info-card__title">What Todoist is</h2>
-        <p class="info-text">
-          Todoist is a popular task management app that helps you organize and track your work. It supports natural language input, so you can type tasks like "Buy groceries tomorrow" and it understands the due date automatically.
-        </p>
-      </div>
-    </section>
+      <!-- How TaskGen Works -->
+      <section id="how-taskgen-works" class="info-section">
+        <div class="card">
+          <h2 class="info-card__title">How TaskGen Works</h2>
+          <p class="info-text">
+            TaskGen builds Todoist task links that open Quick Add with your details pre-filled. These links work with:
+          </p>
+          <ul class="info-list">
+            <li>NFC tags for instant hands-free task creation</li>
+            <li>QR codes for printed reminders</li>
+            <li>Shortcuts and automations</li>
+            <li>Widgets and launchers</li>
+          </ul>
+          <p class="info-text">
+            This saves time, reduces typing, and helps you capture tasks at the exact moment they occur.
+          </p>
+        </div>
+      </section>
 
-    <!-- What TaskGen links do Section -->
-    <section class="info-section">
-      <div class="card">
-        <h2 class="info-card__title">What TaskGen links do</h2>
-        <p class="info-text">
-          TaskGen creates special Todoist Quick Add links that open the Todoist app with your task pre-filled. When you tap or scan these links on a mobile device, Todoist opens with your task ready to add—including the task name, due date, priority, and project.
-        </p>
-        <p class="info-text">
-          On desktop, these links open Todoist in your browser and send the task to your Inbox. On mobile, the task keeps your specified project when added.
-        </p>
-      </div>
-    </section>
+      <!-- What is Todoist Quick Add? -->
+      <section id="what-is-todoist-quick-add" class="info-section">
+        <div class="card">
+          <h2 class="info-card__title">What is Todoist Quick Add</h2>
+          <p class="info-text">
+            Quick Add is Todoist's fastest way to capture a task. When someone opens a TaskGen link, Todoist automatically fills in:
+          </p>
+          <ul class="info-list">
+            <li>Task name</li>
+            <li>Due date (using natural language such as tomorrow or in 2 hours)</li>
+            <li>Priority</li>
+            <li>Project assignment</li>
+          </ul>
+          <p class="info-text">
+            You only need to tap Add task to save it.
+          </p>
+          <p class="info-text" style="margin-top: var(--spacing-3); font-size: 0.9em; color: var(--color-text-secondary);">
+            TaskGen is an independent tool and is not affiliated with Todoist.
+          </p>
+        </div>
+      </section>
 
-    <!-- What QR codes do Section -->
-    <section class="info-section">
-      <div class="card">
-        <h2 class="info-card__title">What QR codes do</h2>
-        <p class="info-text">
-          QR codes are scannable images that contain your Todoist task link. You can print them, display them on screens, or save them to your phone. When someone scans the QR code with their phone's camera, it opens the Todoist Quick Add link automatically.
-        </p>
-      </div>
-    </section>
+      <!-- What is a Todoist task link? -->
+      <section id="what-is-todoist-task-link" class="info-section">
+        <div class="card">
+          <h2 class="info-card__title">What is a Todoist task link</h2>
+          <p class="info-text">
+            A Todoist task link is a URL that opens Quick Add with your task information already set.
+          </p>
+          <p class="info-text">
+            Example:
+          </p>
+          <p class="info-text" style="font-family: monospace; background-color: var(--color-background-secondary); padding: var(--spacing-2); border-radius: var(--radius-md); word-break: break-all; margin-bottom: var(--spacing-3); font-size: 0.9em;">
+            https://todoist.com/add?content=Empty%20dishwasher&date=in%202%20hours&priority=2
+          </p>
+          <p class="info-text">
+            On mobile: Opens Todoist, pre-fills your task, and keeps your project assignment.
+          </p>
+          <p class="info-text">
+            On desktop: Todoist sends all linked tasks to Inbox. This behavior is built into Todoist.
+          </p>
+        </div>
+      </section>
 
-    <!-- How to use with NFC tags Section -->
-    <section class="info-section">
-      <div class="card">
-        <h2 class="info-card__title">How to use links with NFC tags</h2>
-        <ol class="info-list info-list--numbered">
-          <li>Generate your Todoist task link using TaskGen</li>
-          <li>Copy the generated URL</li>
-          <li>Open an NFC writing app like NFC Tools on your phone</li>
-          <li>Select "Write" or "Add a record"</li>
-          <li>Choose "Add a URL" or "Add a web address"</li>
-          <li>Paste your TaskGen link</li>
-          <li>Hold your phone near the NFC tag and write the link</li>
-          <li>Test by tapping the tag—it should open Todoist with your task</li>
-        </ol>
-      </div>
-    </section>
+      <!-- How to create a task link -->
+      <section id="how-to-create-task-link" class="info-section">
+        <div class="card">
+          <h2 class="info-card__title">How to Create a Task Link in TaskGen</h2>
+          <ol class="info-list info-list--numbered">
+            <li>Enter your task name.</li>
+            <li>Add an optional due date using natural language such as tomorrow or in 2 hours.</li>
+            <li>Choose a priority.</li>
+            <li>Add a project name or leave it blank to send the task to Inbox.</li>
+            <li>Tap Generate.</li>
+            <li>Copy the link, write it to an NFC tag, or download a QR code.</li>
+          </ol>
+        </div>
+      </section>
 
-    <!-- Example use cases Section -->
-    <section class="info-section">
-      <div class="card">
-        <h2 class="info-card__title">Example use cases</h2>
-        <ul class="info-list">
-          <li>Place an NFC tag on your desk to quickly add tasks to a "Work" project</li>
-          <li>Put a QR code on your fridge to capture grocery items to a "Shopping" project</li>
-          <li>Use NFC tags in different rooms to route tasks to room-specific projects</li>
-          <li>Share QR codes with team members for collaborative task capture</li>
-          <li>Create recurring task links for weekly meetings or routines</li>
-        </ul>
-      </div>
-    </section>
+      <!-- What you can do with your link -->
+      <section id="what-you-can-do" class="info-section">
+        <div class="card">
+          <h2 class="info-card__title">What You Can Do With Your Link</h2>
+          
+          <h3 class="info-card__title" style="font-size: var(--text-heading-2-font-size); margin-top: var(--spacing-3); margin-bottom: var(--spacing-2);">QR codes</h3>
+          <p class="info-text">
+            Download and print a QR code for your task link. Place it on appliances, notebooks, or whiteboards. Scan it to create the task instantly.
+          </p>
 
-    <!-- Disclaimer Section -->
-    <section class="info-section">
-      <div class="info-card">
-        <p class="info-note">
-          <strong>Note:</strong> This is an unofficial tool and isn't affiliated with Todoist.
-        </p>
-      </div>
-    </section>
+          <h3 class="info-card__title" style="font-size: var(--text-heading-2-font-size); margin-top: var(--spacing-3); margin-bottom: var(--spacing-2);">NFC tags</h3>
+          <p class="info-text">
+            Write your task link to an NFC sticker. Tap your phone on the tag to create the task without opening menus or typing. Ideal for routines, reminders, and workflows around the home or office.
+          </p>
+
+          <h3 class="info-card__title" style="font-size: var(--text-heading-2-font-size); margin-top: var(--spacing-3); margin-bottom: var(--spacing-2);">Share with others</h3>
+          <p class="info-text">
+            Send links by text, email, or messaging apps. Anyone with Todoist installed can create the task with one tap.
+          </p>
+
+          <h3 class="info-card__title" style="font-size: var(--text-heading-2-font-size); margin-top: var(--spacing-3); margin-bottom: var(--spacing-2);">Automations and shortcuts</h3>
+          <p class="info-text">
+            Use your link with:
+          </p>
+          <ul class="info-list">
+            <li>Siri Shortcuts</li>
+            <li>Android routines</li>
+            <li>Home screen widgets</li>
+            <li>App launchers</li>
+            <li>Digital notes and whiteboards</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- What is an NFC tag? -->
+      <section id="what-is-nfc-tag" class="info-section">
+        <div class="card">
+          <h2 class="info-card__title">What Is an NFC Tag</h2>
+          <p class="info-text">
+            NFC (Near Field Communication) tags are small stickers or chips that store simple information. When you bring your phone close to a tag, it reads the stored data instantly.
+          </p>
+          <p class="info-text">
+            <strong>How they work with Todoist:</strong> Write your TaskGen link to the tag. Each tap opens Quick Add with your task already filled in.
+          </p>
+          <p class="info-text">
+            <strong>Where to use them:</strong> Place tags on appliances, desks, fridge doors, or any spot where you want quick reminders.
+          </p>
+          <p class="info-text">
+            <strong>Device compatibility:</strong> Works on iPhone 7 and newer and most Android phones. No setup is required. Just tap to trigger the task.
+          </p>
+          
+          <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: 1px solid var(--color-border);">
+            <p class="info-text" style="margin-bottom: var(--spacing-3);">
+              Try it yourself by creating a task to buy NFC tags.
+            </p>
+            <div class="use-case__buttons">
+              <button class="button button--coffee use-case__button" data-use-case="6" data-action="add-task" aria-label="Add this task in Todoist">
+                Add this task in Todoist
+              </button>
+              <div class="use-case__buttons-secondary">
+                <button class="button button--secondary use-case__button" data-use-case="6" data-action="copy-link" aria-label="Copy task link">
+                  Copy task link
+                </button>
+                <button class="button button--secondary use-case__button" data-use-case="6" data-action="download-qr" aria-label="Download QR code">
+                  Download QR
+                </button>
+              </div>
+            </div>
+            <p class="info-text" style="margin-top: var(--spacing-2); font-size: 0.875em; color: var(--color-text-secondary);">
+              Note: Requires Todoist app installed on your device
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- How to write your link to an NFC tag -->
+      <section id="how-to-write-nfc" class="info-section">
+        <div class="card">
+          <h2 class="info-card__title">How to Write Your Link to an NFC Tag</h2>
+          <ol class="info-list info-list--numbered">
+            <li>
+              <strong>Install NFC Tools:</strong>
+              <ul class="info-list" style="margin-top: var(--spacing-2);">
+                <li>
+                  <a href="https://apps.apple.com/us/app/nfc-tools/id1252962749" target="_blank" rel="noopener noreferrer" aria-label="Download NFC Tools for iPhone">iPhone</a>
+                </li>
+                <li>
+                  <a href="https://play.google.com/store/apps/details?id=com.wakdev.wdnfc" target="_blank" rel="noopener noreferrer" aria-label="Download NFC Tools for Android">Android</a>
+                </li>
+              </ul>
+            </li>
+            <li>Open NFC Tools and select Write.</li>
+            <li>Add a URL record.</li>
+            <li>Paste your TaskGen link.</li>
+            <li>Hold your phone close to the NFC tag to write it.</li>
+            <li>Tap the tag anytime to open Todoist Quick Add.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Popular use cases -->
+      <section id="popular-use-cases" class="info-section">
+        <div class="card">
+          <h2 class="info-card__title">Popular Use Cases</h2>
+          <p class="info-text">
+            Below are real examples that show how TaskGen fits into daily life. Each example provides a link to try in Todoist.
+          </p>
+
+          <!-- Use Case 1: Empty dishwasher in 2 hours -->
+          <div class="use-case">
+            <h3 class="use-case__title">Empty dishwasher in 2 hours</h3>
+            <p class="info-text" style="margin-bottom: var(--spacing-3);">
+              Place an NFC tag or QR code on your dishwasher. Tap your phone when the cycle starts. Todoist schedules a task due in 2 hours so you remember to empty it.
+            </p>
+            <div class="use-case__buttons">
+              <button class="button button--coffee use-case__button" data-use-case="1" data-action="add-task" aria-label="Add this task in Todoist">
+                Add this task in Todoist
+              </button>
+              <div class="use-case__buttons-secondary">
+                <button class="button button--secondary use-case__button" data-use-case="1" data-action="copy-link" aria-label="Copy task link">
+                  Copy task link
+                </button>
+                <button class="button button--secondary use-case__button" data-use-case="1" data-action="download-qr" aria-label="Download QR code">
+                  Download QR
+                </button>
+              </div>
+            </div>
+            <p class="info-text" style="margin-top: var(--spacing-2); font-size: 0.875em; color: var(--color-text-secondary);">
+              Note: Requires Todoist app installed on your device
+            </p>
+          </div>
+
+          <!-- Use Case 2: Move laundry to dryer in 45 minutes -->
+          <div class="use-case">
+            <h3 class="use-case__title">Move laundry to dryer in 45 minutes</h3>
+            <p class="info-text" style="margin-bottom: var(--spacing-3);">
+              Stick an NFC tag on your washing machine. Tap it when you start a load. Todoist creates a reminder due in 45 minutes so clothes never sit wet.
+            </p>
+            <div class="use-case__buttons">
+              <button class="button button--coffee use-case__button" data-use-case="2" data-action="add-task" aria-label="Add this task in Todoist">
+                Add this task in Todoist
+              </button>
+              <div class="use-case__buttons-secondary">
+                <button class="button button--secondary use-case__button" data-use-case="2" data-action="copy-link" aria-label="Copy task link">
+                  Copy task link
+                </button>
+                <button class="button button--secondary use-case__button" data-use-case="2" data-action="download-qr" aria-label="Download QR code">
+                  Download QR
+                </button>
+              </div>
+            </div>
+            <p class="info-text" style="margin-top: var(--spacing-2); font-size: 0.875em; color: var(--color-text-secondary);">
+              Note: Requires Todoist app installed on your device
+            </p>
+          </div>
+
+          <!-- Use Case 3: Check leftovers in 3 days -->
+          <div class="use-case">
+            <h3 class="use-case__title">Check leftovers in 3 days</h3>
+            <p class="info-text" style="margin-bottom: var(--spacing-3);">
+              Put a tag or QR code on your fridge. Scan it when you store leftovers. Todoist creates a task to check them in 3 days and reduce food waste.
+            </p>
+            <div class="use-case__buttons">
+              <button class="button button--coffee use-case__button" data-use-case="3" data-action="add-task" aria-label="Add this task in Todoist">
+                Add this task in Todoist
+              </button>
+              <div class="use-case__buttons-secondary">
+                <button class="button button--secondary use-case__button" data-use-case="3" data-action="copy-link" aria-label="Copy task link">
+                  Copy task link
+                </button>
+                <button class="button button--secondary use-case__button" data-use-case="3" data-action="download-qr" aria-label="Download QR code">
+                  Download QR
+                </button>
+              </div>
+            </div>
+            <p class="info-text" style="margin-top: var(--spacing-2); font-size: 0.875em; color: var(--color-text-secondary);">
+              Note: Requires Todoist app installed on your device
+            </p>
+          </div>
+
+          <!-- Use Case 4: Water plants -->
+          <div class="use-case">
+            <h3 class="use-case__title">Water plants</h3>
+            <p class="info-text" style="margin-bottom: var(--spacing-3);">
+              Attach an NFC tag to a watering can or pot. Tap it each time you water. Todoist schedules the next reminder automatically so you keep plants healthy.
+            </p>
+            <div class="use-case__buttons">
+              <button class="button button--coffee use-case__button" data-use-case="4" data-action="add-task" aria-label="Add this task in Todoist">
+                Add this task in Todoist
+              </button>
+              <div class="use-case__buttons-secondary">
+                <button class="button button--secondary use-case__button" data-use-case="4" data-action="copy-link" aria-label="Copy task link">
+                  Copy task link
+                </button>
+                <button class="button button--secondary use-case__button" data-use-case="4" data-action="download-qr" aria-label="Download QR code">
+                  Download QR
+                </button>
+              </div>
+            </div>
+            <p class="info-text" style="margin-top: var(--spacing-2); font-size: 0.875em; color: var(--color-text-secondary);">
+              Note: Requires Todoist app installed on your device
+            </p>
+          </div>
+
+          <!-- Use Case 5: Tea brewing reminder -->
+          <div class="use-case">
+            <h3 class="use-case__title">Come back for tea in 4 minutes</h3>
+            <p class="info-text" style="margin-bottom: var(--spacing-3);">
+              Place a tag near your kettle. Tap it when you start brewing. Todoist reminds you when the tea is ready so it never over-steeps.
+            </p>
+            <div class="use-case__buttons">
+              <button class="button button--coffee use-case__button" data-use-case="5" data-action="add-task" aria-label="Add this task in Todoist">
+                Add this task in Todoist
+              </button>
+              <div class="use-case__buttons-secondary">
+                <button class="button button--secondary use-case__button" data-use-case="5" data-action="copy-link" aria-label="Copy task link">
+                  Copy task link
+                </button>
+                <button class="button button--secondary use-case__button" data-use-case="5" data-action="download-qr" aria-label="Download QR code">
+                  Download QR
+                </button>
+              </div>
+            </div>
+            <p class="info-text" style="margin-top: var(--spacing-2); font-size: 0.875em; color: var(--color-text-secondary);">
+              Note: Requires Todoist app installed on your device
+            </p>
+          </div>
+          
+          <p class="info-text" style="margin-top: var(--spacing-4); font-size: 0.875em; color: var(--color-text-secondary);">
+            Each example requires the Todoist app to be installed.
+          </p>
+        </div>
+      </section>
+
+      <!-- Tips for best results -->
+      <section id="tips-for-best-results" class="info-section">
+        <div class="card">
+          <h2 class="info-card__title">Tips for Best Results</h2>
+          <ul class="info-list">
+            <li>Use task links on mobile to preserve your project selection.</li>
+            <li>Project names must match exactly. Spelling and capitalization must be correct.</li>
+            <li>Leave the project blank to send tasks to Inbox.</li>
+            <li>Todoist understands natural language for dates and times.</li>
+            <li>Short, clear task names work best.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Troubleshooting -->
+      <section id="troubleshooting" class="info-section">
+        <div class="card">
+          <h2 class="info-card__title">Troubleshooting</h2>
+          
+          <div class="accordion">
+            <button class="accordion__trigger" aria-expanded="false" aria-controls="accordion-content-1" id="accordion-trigger-1">
+              <span class="accordion__question">Why does my project get ignored?</span>
+              <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="accordion__content" id="accordion-content-1" role="region" aria-labelledby="accordion-trigger-1" hidden>
+              <p class="info-text">
+                On desktop, Todoist ignores project parameters and sends all tasks to Inbox. To keep your project assignment, open the link on a mobile device.
+              </p>
+            </div>
+          </div>
+
+          <div class="accordion">
+            <button class="accordion__trigger" aria-expanded="false" aria-controls="accordion-content-2" id="accordion-trigger-2">
+              <span class="accordion__question">Why is my task going to Inbox instead of my project?</span>
+              <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="accordion__content" id="accordion-content-2" role="region" aria-labelledby="accordion-trigger-2" hidden>
+              <p class="info-text">
+                Check that the project name is an exact match. Project names are case-sensitive. If you are on desktop, all tasks go to Inbox by design.
+              </p>
+            </div>
+          </div>
+
+          <div class="accordion">
+            <button class="accordion__trigger" aria-expanded="false" aria-controls="accordion-content-3" id="accordion-trigger-3">
+              <span class="accordion__question">Can I add a task description?</span>
+              <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="accordion__content" id="accordion-content-3" role="region" aria-labelledby="accordion-trigger-3" hidden>
+              <p class="info-text">
+                Not through a link. Todoist does not support descriptions in task URLs. Add details in the task name or edit the task after creation.
+              </p>
+            </div>
+          </div>
+
+          <div class="accordion">
+            <button class="accordion__trigger" aria-expanded="false" aria-controls="accordion-content-4" id="accordion-trigger-4">
+              <span class="accordion__question">Does this work on iPhone and Android?</span>
+              <svg class="accordion__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="accordion__content" id="accordion-content-4" role="region" aria-labelledby="accordion-trigger-4" hidden>
+              <p class="info-text">
+                Yes. QR codes and NFC tags work on both platforms, as long as the Todoist app is installed.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About TaskGen -->
+      <section id="about-taskgen" class="info-section">
+        <div class="card">
+          <h2 class="info-card__title">About TaskGen</h2>
+          <p class="info-text">
+            TaskGen started as a personal tool I built to help myself generate Todoist task links quickly. I found it so useful for my own workflow that I decided to share it with the Todoist community. If you find it helpful, I'd love your support.
+          </p>
+          <p class="info-text">
+            TaskGen is completely independent and not affiliated with Todoist in any way. It's just a simple tool made by someone who loves productivity and wants to help other Todoists work more efficiently.
+          </p>
+          
+          <!-- Buy Me a Coffee Button (External) -->
+          <div id="bmc-button-container" class="bmc-button-container" hidden>
+            <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="edthedesigner" data-color="#FFDD00" data-emoji=""  data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff" ></script>
+          </div>
+          
+          <!-- Buy Me a Coffee Button -->
+          <div id="coffee-button-container" class="coffee-button-container" hidden>
+            <button id="coffee-btn" class="button button--coffee" aria-label="Add a task to tip this tool's creator">
+              Add a task to tip this tool's creator
+            </button>
+            <p class="form-helper">
+              Opens Todoist Quick Add with a task to tip the creator of this tool.
+            </p>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
+  <!-- Snackbar -->
+  <div id="snackbar" class="snackbar" role="status" aria-live="polite" aria-atomic="true" hidden>
+    <span class="snackbar__message">Link copied!</span>
+  </div>
+
   <script src="app.js"></script>
+  <script src="how-it-works.js"></script>
 </body>
 </html>
-
