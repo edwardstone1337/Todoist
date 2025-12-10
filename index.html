@@ -53,10 +53,25 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebSite",
+    "@type": ["WebSite", "WebApplication"],
     "name": "TaskGen",
     "url": "https://www.task-gen.com/",
     "description": "TaskGen lets you create Todoist task links and QR codes you can use with NFC tags. Open Todoist Quick Add from a scan or tap and capture tasks instantly.",
+    "applicationCategory": "ProductivityApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Generate Todoist Quick Add URLs",
+      "Create QR codes for task links",
+      "NFC tag support for quick task capture",
+      "Natural language date parsing",
+      "Project assignment",
+      "Priority setting"
+    ],
     "potentialAction": {
       "@type": "SearchAction",
       "target": "https://www.task-gen.com/?q={search_term_string}",
