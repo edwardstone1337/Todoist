@@ -289,6 +289,19 @@ function initUseCaseButtons() {
       
       if (!url) return;
       
+      // Get use case title from useCaseData
+      const useCase = useCaseData[useCaseNumber];
+      const useCaseTitle = useCase ? useCase.taskTitle : '';
+      
+      // Track use case button click
+      trackButtonClick('button_click', {
+        button_type: 'use_case',
+        use_case_number: useCaseNumber,
+        use_case_title: useCaseTitle,
+        use_case_action: action,
+        page_location: 'how-it-works'
+      });
+      
       switch (action) {
         case 'add-task':
           // Open URL in new tab

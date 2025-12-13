@@ -181,6 +181,13 @@ function handleFormSubmit(e) {
   // Generate URL
   state.generatedUrl = buildTodoistUrl(state);
   
+  // Track Generate button click
+  trackButtonClick('button_click', {
+    button_type: 'generate',
+    button_id: 'generate-btn',
+    page_location: 'generator'
+  });
+  
   // Update UI
   elements.generatedUrlInput.value = state.generatedUrl;
   elements.outputSection.hidden = false;
@@ -287,6 +294,12 @@ async function copyUrlToClipboard() {
   try {
     await navigator.clipboard.writeText(state.generatedUrl);
     showCopySuccess();
+    // Track Copy URL button click
+    trackButtonClick('button_click', {
+      button_type: 'copy_url',
+      button_id: 'copy-url-btn',
+      page_location: 'generator'
+    });
   } catch (err) {
     // Fallback for older browsers
     fallbackCopyToClipboard(state.generatedUrl);
@@ -495,6 +508,13 @@ async function downloadQRCode() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    // Track Download QR button click
+    trackButtonClick('button_click', {
+      button_type: 'download_qr',
+      button_id: 'download-qr-btn',
+      page_location: 'generator'
+    });
     
     // Clean up object URL after a delay
     setTimeout(() => {
@@ -1097,6 +1117,13 @@ if (elements.coffeeBtn) {
   elements.coffeeBtn.addEventListener('click', () => {
     const coffeeUrl = buildCoffeeTaskUrl();
     window.open(coffeeUrl, '_blank');
+    // Track Coffee/Tip button click
+    trackButtonClick('button_click', {
+      button_type: 'todoist_task',
+      button_id: 'coffee-btn',
+      task_type: 'tip_creator',
+      page_location: 'generator'
+    });
   });
 }
 
